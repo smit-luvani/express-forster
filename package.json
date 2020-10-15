@@ -1,0 +1,16 @@
+{
+    "name": "nodejs-express-template",
+    "version": "1.0.0",
+    "description": "This template is based on Node JS Express Framework basically made out for reusability purpose.",
+    "main": "index.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/smit-luvani/nodejs-express-template"
+    },
+    "author": "Smit Luvani",
+    "license": "MIT License",
+    "homepage": "https://github.com/smit-luvani/nodejs-express-template#readme"
+}
