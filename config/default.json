@@ -1,0 +1,15 @@
+{
+    "winston": {
+        "level": "debug"
+    },
+    "logging": {
+        "firebaseAdmin": true,
+        "mongoose": true,
+        "NODE_ENV": false,
+        "jwt": true,
+        "bcryptjs": false
+    },
+    "bcryptjs": {
+        "salt": 6
+    }
+}
