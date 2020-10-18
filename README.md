@@ -9,7 +9,7 @@ Current available Services.
   - mongoose
   - Razorpay
 
-# Upcoming Feature!
+## Upcoming Services!
 
   - AWS SDK, S3, SNS
 
@@ -27,7 +27,7 @@ For development environments...
 ```sh
 $ cd my-directory
 $ export NODE_ENV=development
-$ set PORT=80
+$ export PORT=80
 $ npm install
 $ node start
 ```
@@ -36,7 +36,7 @@ For production environments...
 
 ```sh
 $ cd my-directory
-$ set PORT=80
+$ export PORT=80
 $ export NODE_ENV=production
 $ npm i
 $ npm start
