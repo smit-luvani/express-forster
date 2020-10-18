@@ -7,7 +7,8 @@
         "mongoose": true,
         "NODE_ENV": false,
         "jwt": true,
-        "bcryptjs": false
+        "bcryptjs": false,
+        "razorpay": false
     },
     "bcryptjs": {
         "salt": 6

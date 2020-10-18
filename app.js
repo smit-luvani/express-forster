@@ -5,8 +5,8 @@ const express = require('express'),
 // Console Clear
 console.clear() // Comment this for Continuos logging
 
-logger = require('./src/services/winston')
-logger.info('Server: Working on ' + (process.env.PORT || 80))
+const logger = require('./src/services/winston')
+logger.info(`Server: \x1b[32m\x1b[1m PORT: ${(process.env.PORT || 80)} \x1b[0m || \x1b[32m\x1b[1m NODE_ENV: ${process.env.NODE_ENV||'\x1b[31m\x1b[1m NODE_ENV NOT FOUND'} \x1b[0m `)
 
 // Body Parser
 const bodyParser = require('body-parser'),

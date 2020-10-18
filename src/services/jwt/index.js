@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 const jwt = require('jsonwebtoken'),
     { jwt: secrets } = require('../../../config/secrets.json'),
     logger = require('../winston'),

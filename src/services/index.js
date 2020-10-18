@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 // Export All Services
 
 /**
@@ -13,6 +17,7 @@ module.exports = {
     firebaseAdmin: require('./firebase-admin'),
     jwt: require('./jwt'),
     bcryptjs: require('./bcryptjs'),
+    razorpay: require('./razorpay')
 }
 
 // To Disable, Use Single Line Comment

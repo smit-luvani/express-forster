@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 const firebaseAdmin = require('firebase-admin'),
     { "firebase-admin-sdk": firebase_admin_sdk } = require('../../../config/secrets'),
     logger = require('../winston'),

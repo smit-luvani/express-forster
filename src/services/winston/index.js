@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 // Winston Service
 // Console Logger for Development Environment
 

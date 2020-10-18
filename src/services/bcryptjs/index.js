@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 const bcryptjs = require('bcryptjs'),
     logger = require('../winston'),
     { logging, bcryptjs: option } = require('../../../config/default.json')

@@ -1,3 +1,7 @@
+/**
+ * @author Smit Luvani
+ */
+
 const mongoose = require('mongoose'),
     { mongoose: mongoose_srv } = require('../../../config/secrets'),
     logger = require('../winston'),
