@@ -7,11 +7,11 @@ Current available Services.
   - Firebase Admin
   - winston
   - mongoose
+  - Razorpay
 
 # Upcoming Feature!
 
   - AWS SDK, S3, SNS
-  - Razorpay (Payment Gateway)
 
 You can also:
   - Contribute New Service
