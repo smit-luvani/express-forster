@@ -3,9 +3,9 @@
  */
 
 const firebaseAdmin = require('firebase-admin'),
-    { "firebase-admin-sdk": firebase_admin_sdk } = require('../../../config/secrets'),
+    { "firebase-admin-sdk": firebase_admin_sdk } = require('../../config/secrets'),
     logger = require('../winston'),
-    { logging } = require('../../../config/default.json')
+    { logging } = require('../../config/default.json')
 
 if (!firebase_admin_sdk[process.env.NODE_ENV] || !firebase_admin_sdk[process.env.NODE_ENV].sdk || !firebase_admin_sdk[process.env.NODE_ENV].databaseURL) {
     return logger.error('Service [Firebase Admin]: SDK or Database URL Missing')

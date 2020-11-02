@@ -4,7 +4,7 @@
 
 const bcryptjs = require('bcryptjs'),
     logger = require('../winston'),
-    { logging, bcryptjs: option } = require('../../../config/default.json')
+    { logging, bcryptjs: option } = require('../../config/default.json')
 
 module.exports.hash = async(string) => new Promise(async(resolve, reject) => {
 

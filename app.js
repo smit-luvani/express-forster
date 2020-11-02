@@ -2,6 +2,8 @@ const express = require('express'),
     app = express(),
     httpStatus = require('http-status')
 
+const packageInfo = require('./package.json')
+
 // Console Clear
 console.clear() // Comment this for Continuos logging
 
@@ -39,3 +41,20 @@ app.use((req, res, next) => {
 
 // Enable Particular Service
 const jwt = require('./src/services/jwt')
+
+// App Health Check
+app.use(['/', '/health'], (req, res) => {
+    return res.status(httpStatus.OK).json({
+        message: "Health: Ok",
+        app: packageInfo.name,
+        version: packageInfo.version,
+        description: packageInfo.description,
+        author: packageInfo.author,
+        license: packageInfo.license,
+        homepage: packageInfo.homepage,
+        repository: packageInfo.repository,
+        contributors: packageInfo.contributors
+    })
+})
+
+module.exports = app;

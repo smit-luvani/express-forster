@@ -4,8 +4,8 @@
 
 const logger = require('../winston')
 const razorpay = require('razorpay')
-const { razorpay: razorpay_secrets } = require('../../../config/secrets.json')
-const { logging } = require('../../../config/default.json')
+const { razorpay: razorpay_secrets } = require('../../config/secrets.json')
+const { logging } = require('../../config/default.json')
 
 try {
     module.exports = new razorpay({

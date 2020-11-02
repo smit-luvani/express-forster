@@ -3,9 +3,9 @@
  */
 
 const mongoose = require('mongoose'),
-    { mongoose: mongoose_srv } = require('../../../config/secrets'),
+    { mongoose: mongoose_srv } = require('../../config/secrets'),
     logger = require('../winston'),
-    { logging } = require('../../../config/default.json')
+    { logging } = require('../../config/default.json')
 
 if (!mongoose_srv[process.env.NODE_ENV].srv) {
     return logger.error('Secrets [Mongoose]: srv not found')

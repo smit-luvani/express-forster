@@ -3,9 +3,9 @@
  */
 
 const jwt = require('jsonwebtoken'),
-    { jwt: secrets } = require('../../../config/secrets.json'),
+    { jwt: secrets } = require('../../config/secrets.json'),
     logger = require('../winston'),
-    { logging } = require('../../../config/default.json')
+    { logging } = require('../../config/default.json')
 
 module.exports.sign = (object) => {
     try {

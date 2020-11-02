@@ -3,7 +3,7 @@
  */
 
 const logger = require('../winston'),
-    { logging } = require('../../../config/default.json');
+    { logging } = require('../../config/default.json');
 
 // Environment
 const NODE_ENV = String(process.env.NODE_ENV).trim() || 'development';
