@@ -1,6 +1,6 @@
 # Node JS Express - Ready to use Template
 
-Current available Services.
+## Current available Services.
 
   - JWT (JSON Web token)
   - Bcryptjs
@@ -12,14 +12,14 @@ Current available Services.
   - Multer
   - Multer S3
 
-## Upcoming Services!
+### Upcoming Services!
 
   - Nodemailer
 
-## Upcoming Feature
+### Upcoming Feature
   - Gitlab Pipeline (CI/CD) with AWS Beanstalk
 
-You can also:
+### You can also:
   - Contribute New Service
   - Fix bug or improve in current service
 
