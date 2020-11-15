@@ -1,13 +1,8 @@
+"use strict";
 /**
  * @author Smit Luvani
- */
-
-// Export All Services
-
-/**
- * [RECOMMEND] Use Particular Service instead of all service
- * All services requires all node modules so use particular service as per need is good to implement
- * ex. const mongoose = require('./mongoose')
+ * @description Distribute All Service to Application
+ * @implements [RECOMMEND] Use Particular Service instead of all service or remove unwanted service
  */
 
 module.exports = {
@@ -17,7 +12,10 @@ module.exports = {
     firebaseAdmin: require('./firebase-admin'),
     jwt: require('./jwt'),
     bcryptjs: require('./bcryptjs'),
-    razorpay: require('./razorpay')
+    razorpay: require('./razorpay'),
+    aws: require('./aws-sdk'),
+    multerS3: require('./multer-s3'),
+    multer: require('./multer')
 }
 
 // To Disable, Use Single Line Comment

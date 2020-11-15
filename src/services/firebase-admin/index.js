@@ -1,5 +1,9 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Set Firebase Admin SDK
+ * @module https://www.npmjs.com/package/firebase-admin
+ * @tutorial https://www.npmjs.com/package/firebase-admin#documentation
  */
 
 const firebaseAdmin = require('firebase-admin'),

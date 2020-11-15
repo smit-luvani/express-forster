@@ -1,3 +1,9 @@
+"use strict";
+
+/**
+ * @author Smit Luvani
+ * @description This Function creates uniform response for application
+ */
 const logger = require("../services/winston")
 
 module.exports = (res, status, message, data, customCode) => {
@@ -7,9 +13,9 @@ module.exports = (res, status, message, data, customCode) => {
         return logger.error('Response Object is require to send response')
     }
 
-    if (!status || isNaN(parseInt)) {
+    if (!status || isNaN(parseInt(status))) {
         return logger.error('Valid Status Code is required')
     }
 
-    return res.status(parseInt(status)).json({ status, message, data, customCode })
+    return res.status(parseInt(status)).json({ status: parseInt(status), message, data, customCode })
 }

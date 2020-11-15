@@ -1,5 +1,8 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Create Bearer Token for Object
+ * @module https://www.npmjs.com/package/jsonwebtoken
  */
 
 const jwt = require('jsonwebtoken'),

@@ -8,10 +8,16 @@ Current available Services.
   - winston
   - mongoose
   - Razorpay
+  - AWS SDK
+  - Multer
+  - Multer S3
 
 ## Upcoming Services!
 
-  - AWS SDK, S3, SNS
+  - Nodemailer
+
+## Upcoming Feature
+  - Gitlab Pipeline (CI/CD) with AWS Beanstalk
 
 You can also:
   - Contribute New Service
@@ -25,7 +31,7 @@ Install the dependencies and devDependencies and start the server.
 
 For development environments...
 ```sh
-$ cd my-directory
+$ cd nodejs-express-template
 $ export NODE_ENV=development
 $ export PORT=80
 $ npm install
@@ -35,7 +41,7 @@ $ node start
 For production environments...
 
 ```sh
-$ cd my-directory
+$ cd nodejs-express-template
 $ export PORT=80
 $ export NODE_ENV=production
 $ npm i

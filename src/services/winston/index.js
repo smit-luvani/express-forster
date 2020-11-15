@@ -1,5 +1,8 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Winston is use to log in development environment
+ * @module https://www.npmjs.com/package/winston
  */
 
 // Winston Service

@@ -1,5 +1,8 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Configure Razorpay with Key
+ * @module https://www.npmjs.com/package/razorpay
  */
 
 const logger = require('../winston')
@@ -14,5 +17,5 @@ try {
     })
     logging.razorpay ? logger.info('Service [Razorpay]: Connected') : null;
 } catch (error) {
-    return logger.error('Service [Razorpay]: Failed to Initialize Object.\n' + error)
+    logger.error('Service [Razorpay]: Failed to Initialize Object.\n' + error)
 }

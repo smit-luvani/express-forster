@@ -1,5 +1,9 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Export Mongoose Schema Module with Configuration and MongoDB Connection
+ * @module https://www.npmjs.com/package/mongoose
+ * @tutorial https://mongoosejs.com/docs/guide.html
  */
 
 const mongoose = require('mongoose'),

@@ -1,5 +1,8 @@
+"use strict";
 /**
  * @author Smit Luvani
+ * @description Hash String using bcrypt JS
+ * @module https://www.npmjs.com/package/bcryptjs
  */
 
 const bcryptjs = require('bcryptjs'),

@@ -1,19 +1,19 @@
+"use strict";
 const express = require('express'),
     app = express(),
-    httpStatus = require('http-status')
-
-const packageInfo = require('./package.json')
+    httpStatus = require('http-status'),
+    logger = require('./src/services/winston'),
+    packageInfo = require('./package.json')
 
 // Console Clear
 console.clear() // Comment this for Continuos logging
 
-const logger = require('./src/services/winston')
-logger.info(`Server: \x1b[32m\x1b[1m PORT: ${(process.env.PORT || 80)} \x1b[0m || \x1b[32m\x1b[1m NODE_ENV: ${process.env.NODE_ENV||'\x1b[31m\x1b[1m NODE_ENV NOT FOUND'} \x1b[0m `)
+// Environment Checker
+app.use(require('./src/services/NODE_ENV'))
+logger.info(`Server: \x1b[32m\x1b[1m PORT: ${(process.env.PORT || 80)} \x1b[0m || \x1b[32m\x1b[1m NODE_ENV: ${process.env.NODE_ENV||'\x1b[31m\x1b[1m NODE_ENV NOT FOUND'} \x1b[0m`)
 
 // Body Parser
-const bodyParser = require('body-parser'),
-    multipartParser = require('express-fileupload')
-
+const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }), bodyParser.json(), (error, req, res, next) => {
     if (error instanceof SyntaxError) {
         return res.status(httpStatus.BAD_REQUEST).json({ message: 'SyntaxError: Invalid Body' })
@@ -24,7 +24,9 @@ app.use(bodyParser.urlencoded({ extended: false }), bodyParser.json(), (error, r
     next()
 })
 
-app.use(multipartParser())
+// Multipart form data parser. Remove this , If you want to use multer
+// const multipartParser = require('express-fileupload')
+// app.use(multipartParser())
 
 // URI Error Handling
 app.use((req, res, next) => {
@@ -36,16 +38,16 @@ app.use((req, res, next) => {
     }
 })
 
-// Enable Service
+// To Use Service from All Services 
 // const { bcryptjs } = require('./src/services/index') // Go To file for Enable/Disable Service
 
-// Enable Particular Service
-const jwt = require('./src/services/jwt')
+// To Use Particular Service
+// const jwt = require('./src/services/jwt')
 
 // App Health Check
-app.use(['/', '/health'], (req, res) => {
+app.get(['/', '/health'], (req, res) => {
     return res.status(httpStatus.OK).json({
-        message: "Health: Ok",
+        message: "Health: OK",
         app: packageInfo.name,
         version: packageInfo.version,
         description: packageInfo.description,
