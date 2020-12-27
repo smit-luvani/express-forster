@@ -1,10 +1,8 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Multer will upload file object to System Bucket
  * @module https://www.npmjs.com/package/multer
  */
-"use strict";
 const multer = require('multer'),
     { multer: multerConfig } = require('../../config/default.json'),
     { v4: uuidv4 } = require('uuid')

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Set Firebase Admin SDK
@@ -7,7 +6,7 @@
  */
 
 const firebaseAdmin = require('firebase-admin'),
-    { "firebase-admin-sdk": firebase_admin_sdk } = require('../../config/secrets'),
+    { 'firebase-admin-sdk': firebase_admin_sdk } = require('../../config/secrets'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
 

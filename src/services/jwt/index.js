@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Create Bearer Token for Object
@@ -23,7 +22,7 @@ module.exports.sign = (object) => {
 
         return token;
     } catch (error) {
-        logger.error('Service [JWT]: ' + error);
+        logger.error('Service [JWT]: ' + error)
         return null
     }
 }

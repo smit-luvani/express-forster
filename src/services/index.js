@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Distribute All Service to Application
@@ -15,8 +14,9 @@ module.exports = {
     razorpay: require('./razorpay'),
     aws: require('./aws-sdk'),
     multerS3: require('./multer-s3'),
-    multer: require('./multer')
-}
+    multer: require('./multer'),
+    nodemailer: require('./nodemailer'),
+};
 
 // To Disable, Use Single Line Comment
 

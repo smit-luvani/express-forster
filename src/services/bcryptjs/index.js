@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Hash String using bcrypt JS

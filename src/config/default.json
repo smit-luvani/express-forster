@@ -9,7 +9,8 @@
         "jwt": true,
         "bcryptjs": false,
         "razorpay": false,
-        "multerS3": true
+        "multerS3": true,
+        "nodemailer": true
     },
     "bcryptjs": {
         "salt": 6

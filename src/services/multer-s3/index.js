@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Multer S3 will upload file object to AWS S3 Bucket

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @author Smit Luvani
  * @description Export Mongoose Schema Module with Configuration and MongoDB Connection
