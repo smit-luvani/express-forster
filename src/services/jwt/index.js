@@ -29,6 +29,7 @@ module.exports.sign = (object) => {
 
 module.exports.verify = (token) => {
     try {
+        logger.info((token, jwt.verify(token, secrets[process.env.NODE_ENV])) ? JSON.stringify(jwt.verify(token, secrets[process.env.NODE_ENV])) : 'Token Decode Failed/Expired')
         return token ? jwt.verify(token, secrets[process.env.NODE_ENV]) : false;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)

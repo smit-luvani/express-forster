@@ -11,6 +11,11 @@ const nodemailer = require('nodemailer'),
     { logging } = require('../../config/default.json'),
     logger = require('../winston')
 
+// Check Secret
+if (!nodemailerSecret[process.env.NODE_ENV] || !nodemailerSecret[process.env.NODE_ENV].smtp || !nodemailerSecret[process.env.NODE_ENV].email || !nodemailerSecret[process.env.NODE_ENV].password) {
+    return logger.error('Service [NODEMAILER]: SMTP or Email or Password not found for current environment')
+}
+
 module.exports = async(fromMail, toMail, subject, body, senderName) => {
     if (!fromMail || !toMail || !subject || !body) {
         return logger.error('Service [NODEMAILER]: Missing Required Parameter')

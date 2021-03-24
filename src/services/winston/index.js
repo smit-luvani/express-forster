@@ -13,16 +13,51 @@ const winston = require('winston'),
 
 const { combine, label, timestamp, printf } = winston.format;
 
-const format = printf(({ level, message, label, timestamp }) => {
-    return `[${label}] ${String(new Date(timestamp))} ${level}: ${message}`;
-})
+const fileFormat = winston.format.combine(
+    winston.format.json(),
+    winston.format.printf(
+        info => {
+            return `${String(new Date()).toString()}  ${info.level} : ${info.message}`
+        }
+    ))
 
-const option = {
-    level: winston_logger.level,
-    format: combine(label({ label: name }), timestamp(), format),
-    transports: [new winston.transports.Console()]
+let today = () => {
+    let now = new Date()
+    return `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`
 }
 
-const logger = winston.createLogger(option)
+const option = {
+    transports: [
+        new winston.transports.Console({
+            level: winston_logger.level,
+            json: true,
+            prettyPrint: true,
+            format: combine(
+                label({ label: name }),
+                winston.format.json(),
+                timestamp(),
+                printf(({ level, message, label, timestamp }) => {
+                    return `[${label}] ${String(new Date(timestamp))} ${level}: ${String(message)}`;
+                })),
+        }),
+        new winston.transports.File({
+            format: fileFormat,
+            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/stdout-${today()}.log`,
+            json: true
+        }),
+        new winston.transports.File({
+            format: fileFormat,
+            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/info-${today()}.log`,
+            json: true,
+            level: 'info'
+        }),
+        new winston.transports.File({
+            format: fileFormat,
+            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/error-${today()}.log`,
+            json: true,
+            level: 'error'
+        })
+    ]
+}
 
-module.exports = logger;
+module.exports = winston.createLogger(option)
