@@ -3,7 +3,8 @@
  * @description Time Validation
  */
 
-const logger = require("../services/winston")
+const logger = require("../services/winston"),
+    moment = require('moment')
 
 module.exports.minuteHour = (value) => {
 
@@ -53,3 +54,11 @@ module.exports.secondMinuteHour = (value) => {
     }
     return false;
 }
+
+module.exports.timeDifference = (startTimeObject, endTimeObject, unit) =>
+    Math.abs(
+        moment(new Date(startTimeObject)).diff(
+            moment(new Date(endTimeObject)),
+            unit || 'hours',
+        ),
+    )

@@ -1,0 +1,35 @@
+image: sleavely/node-awscli:14.x # OS image
+
+variables:
+    COLON: ':'
+    DEFAULT_PLATFORM: 64bit Amazon Linux 2017.03 v4.5 running Node 12.13 # platform in AWS
+    DEFAULT_REGION: ap-south-1 # server region
+    PROJECT_NAME: express-forster # you can whatever you want
+    APP_NAME: express-forster # your beanstalk application name
+    BUCKET_NAME: elasticbeanstalk-ap-south-1-9999999 # bucket name in AWS
+
+before_script:
+    - rm -rf /var/cache/apk/* && \
+    - rm -rf /tmp/*
+
+deploy:
+    stage: deploy
+    variables:
+        AWS_ACCESS_KEY_ID: $DEV_AWS_ACCESS_KEY_ID # set variable in gitlab [Ref.: https://docs.gitlab.com/ee/ci/variables/README.html]
+        AWS_SECRET_ACCESS_KEY: $DEV_AWS_SECRET_ACCESS_KEY # set variable
+        ENV: express-dev-env # your environment in beanstalk
+    script:       
+        - npm install
+        - npm run bestZip
+        - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        - aws configure set region $DEFAULT_REGION
+        - aws s3 cp $PROJECT_NAME.zip s3://$BUCKET_NAME/$PROJECT_NAME-$CI_PIPELINE_ID.zip
+        - aws elasticbeanstalk create-application-version --application-name $APP_NAME --version-label $APP_NAME-$CI_PIPELINE_ID --source-bundle S3Bucket=$BUCKET_NAME,S3Key=$PROJECT_NAME-$CI_PIPELINE_ID.zip --region $DEFAULT_REGION
+        - aws elasticbeanstalk update-environment --application-name $APP_NAME --environment-name $ENV --version-label $APP_NAME-$CI_PIPELINE_ID --region $DEFAULT_REGION
+        - echo "Pipeline run successfully! Check Beanstalk for health"
+    only:
+        refs:
+            - developing # your protected branch name
+        # variables:
+        # - $CI_PIPELINE_SOURCE == "web" # Run only when pipeline is triggered via Gitlab UI
