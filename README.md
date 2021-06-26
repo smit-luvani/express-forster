@@ -12,10 +12,7 @@
 - Multer
 - Multer S3
 - Nodemailer
-
-### Upcoming Feature
-
-- Gitlab Pipeline (CI/CD) with AWS Beanstalk
+- Gitlab CI/CD for AWS Beanstalk
 
 ### You can also:
 
