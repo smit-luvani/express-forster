@@ -34,7 +34,8 @@ module.exports.secondMinuteHour = (value) => {
 
         // Hour Validation
         if (isNaN(parseInt(hour)) || hour.length != 2 || hour < 0 || hour > 23) {
-
+            logger.error(`Time ${hour}:${minute} is invalid. Hour and Minutes must be integer value`);
+            return false;
         }
 
         // Minute Validation

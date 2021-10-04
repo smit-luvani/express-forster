@@ -16,24 +16,26 @@ if (!nodemailerSecret[process.env.NODE_ENV] || !nodemailerSecret[process.env.NOD
     return logger.error('Service [NODEMAILER]: SMTP or Email or Password not found for current environment')
 }
 
+let transporter = nodemailer.createTransport({
+    service: nodemailerSecret[process.env.NODE_ENV].smtp || 'gmail',
+    port: nodemailerSecret[process.env.NODE_ENV].port || 465,
+    secure: true,
+    debug: true,
+    logger: true,
+    auth: {
+        user: nodemailerSecret[process.env.NODE_ENV].email,
+        pass: nodemailerSecret[process.env.NODE_ENV].password,
+    },
+});
+
 module.exports = async(fromMail, toMail, subject, body, senderName) => {
-    if (!fromMail || !toMail || !subject || !body) {
+    if (!toMail || !subject || !body) {
         return logger.error('Service [NODEMAILER]: Missing Required Parameter')
     }
 
     try {
-        let transporter = nodemailer.createTransport({
-            service: nodemailerSecret[process.env.NODE_ENV].smtp || 'gmail',
-            port: nodemailerSecret[process.env.NODE_ENV].port || 465,
-            secure: true,
-            auth: {
-                user: nodemailerSecret[process.env.NODE_ENV].email,
-                pass: nodemailerSecret[process.env.NODE_ENV].password,
-            },
-        });
-
         let info = await transporter.sendMail({
-            from: `${senderName || fromMail}`, // sender address
+            from: `${senderName || fromMail || 'Express Forster'}`, // sender address
             to: toMail, // list of receivers
             subject: subject, // Subject line
             html: body, // html body

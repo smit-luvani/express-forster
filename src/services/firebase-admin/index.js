@@ -21,5 +21,5 @@ try {
     });
     logging.firebaseAdmin ? logger.info('Service [Firebase Admin]: SUCCESS') : null;
 } catch {
-    return console.log('Service [Firebase Admin]: Failed. SDK or database URL Invalid')
+    return logger.info('Service [Firebase Admin]: Failed. SDK or database URL Invalid')
 }
