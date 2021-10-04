@@ -18,12 +18,28 @@ module.exports = (res, status, message, data, customCode) => {
         return logger.error('Valid Status Code is required')
     }
 
-    return res.status(parseInt(status)).json({
+    // Calculate Response Time from Request Time
+    let requestTime = res._requestTime
+    let responseTime = (Date.now() - requestTime) / 1000
+
+    let jsonResponse = {
         status,
         response: httpStatus[`${status}_NAME`],
-        error: (status != 200) ? httpStatus[`${status}_MESSAGE`] : undefined,
+        error: (status < 200 && status > 299) ? httpStatus[`${status}_MESSAGE`] : undefined,
         message,
         data,
         customCode
-    })
+    }
+
+    // Logging the response
+    logger.debug(`Response:
+    Request ID: ${res._requestID} | Time: ${responseTime} s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response}
+    Message: ${jsonResponse.message}
+    Data: ${(status < 200 || status > 299) ? jsonResponse.data || null : 'SUCCESS-RESPONSE-SHOULD-BE-HIDDEN'}`)
+
+    // Set Header
+    res.setHeader('request-ID', res._requestID)
+
+    // Send Response
+    return res.status(parseInt(status)).json(jsonResponse)
 }

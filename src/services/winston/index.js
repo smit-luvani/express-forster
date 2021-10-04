@@ -23,7 +23,7 @@ const fileFormat = winston.format.combine(
 
 let today = () => {
     let now = new Date()
-    return `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`
+    return `${String('0'+now.getDate()).slice(-2)}-${String('0'+(now.getMonth()+1)).slice(-2)}-${now.getFullYear()}`
 }
 
 const option = {
