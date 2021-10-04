@@ -5,7 +5,7 @@
     "logging": {
         "firebaseAdmin": true,
         "mongoose": true,
-        "NODE_ENV": false,
+        "NODE_ENV": true,
         "jwt": true,
         "bcryptjs": false,
         "razorpay": false,
@@ -27,6 +27,17 @@
         "acl": "public-read"
     },
     "multer": {
-        "validMimeType": ["image/png", "image/jpeg", "image/jpg", "application/pdf"]
+        "validMimeType": [
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "application/pdf",
+            "audio/mp3",
+            "audio/x-wav",
+            "audio/wav",
+            "audio/mpeg",
+            "audio/ogg",
+            "audio/mp4"
+        ]
     }
 }
