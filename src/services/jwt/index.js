@@ -9,9 +9,9 @@ const jwt = require('jsonwebtoken'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
 
-module.exports.sign = (object) => {
+module.exports.sign = (object, expiredIn) => {
     try {
-        const token = object ? jwt.sign(object, secrets[process.env.NODE_ENV]) : undefined;
+        const token = object ? jwt.sign(object, secrets[process.env.NODE_ENV], { expiresIn: expiredIn || '1000d' }) : undefined;
 
         if (!token) {
             logger.error('Service [JWT]: String/Object Required to create Sign Token')
