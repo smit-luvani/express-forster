@@ -29,7 +29,7 @@ You can configure app and set secrets for service in config.json and secrets.jso
 For development environments
 
 ```sh
-$ cd nodejs-express-template #avoid this if you're in project directory
+$ cd express-forster #avoid this if you're in project directory
 $ export NODE_ENV=development # For Windows OS: set NODE_ENV=development
 $ export PORT=80 # For Windows OS: set PORT=80
 $ npm install
