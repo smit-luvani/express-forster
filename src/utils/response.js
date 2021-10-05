@@ -35,7 +35,7 @@ module.exports = (res, status, message, data, customCode) => {
     logger.debug(`Response:
     Request ID: ${res._requestID} | Time: ${responseTime} s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response}
     Message: ${jsonResponse.message}
-    Data: ${(status < 200 || status > 299) ? jsonResponse.data || null : 'SUCCESS-RESPONSE-SHOULD-BE-HIDDEN'}`)
+    Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || null : 'SUCCESS-RESPONSE-SHOULD-BE-HIDDEN'}`)
 
     // Set Header
     res.setHeader('request-ID', res._requestID)
