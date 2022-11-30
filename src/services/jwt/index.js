@@ -6,7 +6,7 @@
 
 const jwt = require('jsonwebtoken'),
     logger = require('../winston'),
-    { logging } = require('../../config/default.json')
+    { logging } = require('../../config/default.js')
 
 module.exports.sign = (object, expiredIn) => {
     try {

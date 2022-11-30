@@ -8,7 +8,7 @@
 const AWS = require('../aws-sdk'),
     multer = require('multer'),
     multerS3 = require('multer-s3'),
-    { awsSDK: awsSDKConfig, multer: multerConfig, logging } = require('../../config/default.json'),
+    { awsSDK: awsSDKConfig, multer: multerConfig, logging } = require('../../config/default.js'),
     logger = require('../winston'),
     { v4: uuidv4 } = require('uuid')
 

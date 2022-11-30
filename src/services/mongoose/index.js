@@ -7,7 +7,7 @@
 
 const mongoose = require('mongoose'),
     logger = require('../winston'),
-    { logging } = require('../../config/default.json')
+    { logging } = require('../../config/default.js')
 
 try {
     mongoose.connect(process.env.MONGO_DB_SRV, {

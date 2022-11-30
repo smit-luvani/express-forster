@@ -7,7 +7,7 @@
 
 const logger = require('../winston'),
     razorpay = require('razorpay'),
-    { logging } = require('../../config/default.json');
+    { logging } = require('../../config/default.js');
 
 let header = {
     // Base64 encoded

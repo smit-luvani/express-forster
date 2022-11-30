@@ -4,16 +4,16 @@
  * @module https://www.npmjs.com/package/multer
  */
 const multer = require('multer'),
-    { multer: multerConfig } = require('../../config/default.json'),
+    { multer: multerConfig } = require('../../config/default.js'),
     { v4: uuidv4 } = require('uuid')
 
 // Local Storage
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         let destinationPath = process.cwd()
         cb(null, destinationPath)
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + uuidv4() + file.mimetype.split('/')[1])
     }
 })

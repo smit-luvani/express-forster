@@ -1,4 +1,4 @@
-{
+module.exports = {
     "winston": {
         "level": "debug"
     },

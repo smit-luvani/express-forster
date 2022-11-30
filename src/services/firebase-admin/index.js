@@ -7,7 +7,7 @@
 
 const firebaseAdmin = require('firebase-admin'),
     logger = require('../winston'),
-    { logging } = require('../../config/default.json')
+    { logging } = require('../../config/default.js')
 
 const serviceAccount = require('../../config/firebase-secret')();
 if (!serviceAccount) {

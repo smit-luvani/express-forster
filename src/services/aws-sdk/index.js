@@ -6,7 +6,7 @@
 
 const AWS = require('aws-sdk'),
     logger = require('../winston'),
-    { awsSDK: awsSDKConfig } = require('../../config/default.json')
+    { awsSDK: awsSDKConfig } = require('../../config/default.js')
 
 AWS.config.update({
     region: awsSDKConfig.region,

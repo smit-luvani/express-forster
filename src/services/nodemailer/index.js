@@ -7,7 +7,7 @@
  */
 
 const nodemailer = require('nodemailer'),
-    { logging } = require('../../config/default.json'),
+    { logging } = require('../../config/default.js'),
     logger = require('../winston')
 
 let transporter = nodemailer.createTransport({

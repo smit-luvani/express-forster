@@ -20,4 +20,4 @@ module.exports = {
 // To Disable, Use Single Line Comment
 
 // Service Log
-// Enable/Disable Service Logging in config/default.json file
+// Enable/Disable Service Logging in config/default.js file
