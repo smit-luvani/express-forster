@@ -11,20 +11,17 @@ const winston = require('winston'),
     { winston: winston_logger } = require('../../config/default.json'),
     { name } = require('../../../package.json')
 
-const { combine, label, timestamp, printf } = winston.format;
+const { combine, timestamp, printf, json } = winston.format;
 
-const fileFormat = winston.format.combine(
-    winston.format.json(),
-    winston.format.printf(
-        info => {
-            return `${String(new Date()).toString()}  ${info.level} : ${info.message}`
-        }
-    ))
+const logFormat = combine(
+    json(),
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
+    printf(({ level, message, timestamp }) => {
+        typeof message === 'object' ? message = JSON.stringify(message) : null;
+        return `${timestamp} [${level}]: ${String(message)}`;
+    }))
 
-let today = () => {
-    let now = new Date()
-    return `${String('0'+now.getDate()).slice(-2)}-${String('0'+(now.getMonth()+1)).slice(-2)}-${now.getFullYear()}`
-}
+const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
 
 const option = {
     transports: [
@@ -32,28 +29,16 @@ const option = {
             level: winston_logger.level,
             json: true,
             prettyPrint: true,
-            format: combine(
-                label({ label: name }),
-                winston.format.json(),
-                timestamp(),
-                printf(({ level, message, label, timestamp }) => {
-                    return `[${label}] ${String(new Date(timestamp))} ${level}: ${String(message)}`;
-                })),
+            format: logFormat
         }),
         new winston.transports.File({
-            format: fileFormat,
-            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/stdout-${today()}.log`,
+            format: logFormat,
+            filename: process.cwd() + `/.logs/${process.env.NODE_ENV || 'no-environment'}/stdout-${today}.log`,
             json: true
         }),
         new winston.transports.File({
-            format: fileFormat,
-            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/info-${today()}.log`,
-            json: true,
-            level: 'info'
-        }),
-        new winston.transports.File({
-            format: fileFormat,
-            filename: process.cwd() + `/.logs/${process.env.NODE_ENV||'no-environment'}/error-${today()}.log`,
+            format: logFormat,
+            filename: process.cwd() + `/.logs/${process.env.NODE_ENV || 'no-environment'}/error-${today}.log`,
             json: true,
             level: 'error'
         })
