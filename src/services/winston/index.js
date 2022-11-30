@@ -8,8 +8,7 @@
 // Console Logger for Development Environment
 
 const winston = require('winston'),
-    { winston: winston_logger } = require('../../config/default.js'),
-    { name } = require('../../../package.json')
+    { winston: winston_logger } = require('../../config/default.js')
 
 const { combine, timestamp, printf, json } = winston.format;
 
