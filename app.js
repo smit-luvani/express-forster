@@ -6,13 +6,6 @@ const express = require('express'),
     response = require('./src/utils/response'),
     { randomDigit } = require('./src/utils/random')
 
-// Console Clear
-console.clear() // Comment this for Continuos logging
-
-// Environment Checker
-app.use(require('./src/services/NODE_ENV'));
-logger.info(`Server: \x1b[32m\x1b[1m PORT: ${process.env.PORT || 80} \x1b[0m || \x1b[32m\x1b[1m NODE_ENV: ${process.env.NODE_ENV || '\x1b[31m\x1b[1m NODE_ENV NOT FOUND'} \x1b[0m`)
-
 // Body Parser
 app.use(express.urlencoded({ extended: true }), express.json(), (error, req, res, next) => {
     if (error instanceof SyntaxError) {
@@ -51,7 +44,7 @@ app.use((req, res, next) => {
 
         logger.debug(`
         Request: 
-        Request ID: ${res._requestID} | IP: ${(req.headers[ 'x-forwarded-for' ] || req.socket.remoteAddress).split(",")[0]}
+        Request ID: ${res._requestID} | IP: ${(req.headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
         Path: ${req.path} | Method: ${req.method}
         header: ${JSON.stringify(req.headers)}
         Body: ${JSON.stringify(req.body)}

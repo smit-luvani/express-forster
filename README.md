@@ -24,20 +24,23 @@ Please follow coding indentation and directory structure if you do pull request.
 ### Installation
 
 Install the dependencies and devDependencies and start the server.
-You can configure app and set secrets for service in config.json and secrets.json in src/config directory.
 
-For development environments
+Environment File (required):
+- Create environment file in root of the project (i.g. ./)
+- File name must prefix with .env. and the follow by environment name (i.g. .env.development)
+- Copy the content of .env.example file and paste it in your environment file and change the value as per your requirement.
 
+Start the application/server:
 ```sh
 $ cd nodejs-express-template #avoid this if you're in project directory
-$ export NODE_ENV=development # For Windows OS: set NODE_ENV=development
-$ export PORT=80 # For Windows OS: set PORT=80
 $ npm install
-$ node start
-```
 
-For production environments
+# For Environment, set variable with name given below and value as per your server environment (e.g. development, production, staging)
+## Windows OS
+> set NODE_ENV=
+## Linux OS
+$ export NODE_ENV=
 
-```sh
-$ export NODE_ENV=production # set NODE_ENV=production
+# Start the server
+$ npm start
 ```

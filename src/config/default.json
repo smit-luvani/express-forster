@@ -5,7 +5,6 @@
     "logging": {
         "firebaseAdmin": true,
         "mongoose": true,
-        "NODE_ENV": true,
         "jwt": true,
         "bcryptjs": false,
         "razorpay": false,

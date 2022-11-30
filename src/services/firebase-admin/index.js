@@ -6,20 +6,22 @@
  */
 
 const firebaseAdmin = require('firebase-admin'),
-    { 'firebase-admin-sdk': firebase_admin_sdk } = require('../../config/secrets'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
 
-if (!firebase_admin_sdk[process.env.NODE_ENV] || !firebase_admin_sdk[process.env.NODE_ENV].sdk || !firebase_admin_sdk[process.env.NODE_ENV].databaseURL) {
-    return logger.error('Service [Firebase Admin]: SDK or Database URL Missing')
+const serviceAccount = require('../../config/firebase-secret')();
+if (!serviceAccount) {
+    logger.error('Service [Firebase Admin]: SDK or Database URL Missing')
+    process.exit(1);
 }
 
 try {
     firebaseAdmin.initializeApp({
-        credential: firebaseAdmin.credential.cert(firebase_admin_sdk[process.env.NODE_ENV].sdk),
-        databaseURL: firebase_admin_sdk[process.env.NODE_ENV].databaseURL
+        credential: firebaseAdmin.credential.cert(serviceAccount.sdk),
+        databaseURL: serviceAccount.databaseURL
     });
     logging.firebaseAdmin ? logger.info('Service [Firebase Admin]: SUCCESS') : null;
 } catch {
-    return logger.info('Service [Firebase Admin]: Failed. SDK or database URL Invalid')
+    logger.info('Service [Firebase Admin]: Failed. SDK or database URL Invalid')
+    process.exit(1);
 }

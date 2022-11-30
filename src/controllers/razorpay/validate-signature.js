@@ -7,7 +7,6 @@
 
 const { winston: logger } = require('../../services')
 const crypto = require('crypto')
-const { razorpay } = require('../../config/secrets.json')
 
 module.exports = ({ razorpay_payment_id, razorpay_order_id, razorpay_signature }) => {
 
@@ -21,7 +20,7 @@ module.exports = ({ razorpay_payment_id, razorpay_order_id, razorpay_signature }
         }
 
         // Create hmac signature and match with razorpay signature
-        return crypto.createHmac('sha256', razorpay[process.env.NODE_ENV].key_secret).update(razorpay_order_id + '|' + razorpay_payment_id).digest('hex') == razorpay_signature
+        return crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(razorpay_order_id + '|' + razorpay_payment_id).digest('hex') == razorpay_signature
 
     } catch (error) {
         return { error: JSON.parse(error.message) };

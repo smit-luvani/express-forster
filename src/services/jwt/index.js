@@ -5,13 +5,12 @@
  */
 
 const jwt = require('jsonwebtoken'),
-    { jwt: secrets } = require('../../config/secrets.json'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
 
 module.exports.sign = (object, expiredIn) => {
     try {
-        const token = object ? jwt.sign(object, secrets[process.env.NODE_ENV], { expiresIn: expiredIn || '1000d' }) : undefined;
+        const token = object ? jwt.sign(object, process.env.JWT_SECRET, { expiresIn: expiredIn || '1000d' }) : undefined;
 
         if (!token) {
             logger.error('Service [JWT]: String/Object Required to create Sign Token')
@@ -29,8 +28,8 @@ module.exports.sign = (object, expiredIn) => {
 
 module.exports.verify = (token) => {
     try {
-        logger.info((token, jwt.verify(token, secrets[process.env.NODE_ENV])) ? JSON.stringify(jwt.verify(token, secrets[process.env.NODE_ENV])) : 'Token Decode Failed/Expired')
-        return token ? jwt.verify(token, secrets[process.env.NODE_ENV]) : false;
+        logger.info((token, jwt.verify(token, process.env.JWT_SECRET)) ? JSON.stringify(jwt.verify(token, process.env.JWT_SECRET)) : 'Token Decode Failed/Expired')
+        return token ? jwt.verify(token, process.env.JWT_SECRET) : false;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)
         return false;

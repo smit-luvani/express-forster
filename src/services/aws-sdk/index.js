@@ -6,16 +6,15 @@
 
 const AWS = require('aws-sdk'),
     logger = require('../winston'),
-    { awsSDK: awsSDKConfig } = require('../../config/default.json'),
-    { awsSDK: awsSecrets } = require('../../config/secrets.json');
+    { awsSDK: awsSDKConfig } = require('../../config/default.json')
 
 AWS.config.update({
     region: awsSDKConfig.region,
-    accessKeyId: awsSecrets.accessKeyId,
-    secretAccessKey: awsSecrets.secretAccessKey,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-AWS.config.getCredentials(function(err) {
+AWS.config.getCredentials(function (err) {
     err ? logger.error('Service [AWS-SDK]: ' + err.stack) : null;
 });
 

@@ -10,12 +10,13 @@ const mongoose = require('mongoose'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
 
-if (!mongoose_srv[process.env.NODE_ENV].srv) {
-    return logger.error('Secrets [Mongoose]: srv not found')
+if (!process.env.MONGO_DB_SRV) {
+    logger.error('Secrets [Mongoose]: srv not found')
+    process.exit(1);
 }
 
 try {
-    mongoose.connect(mongoose_srv[process.env.NODE_ENV].srv, {
+    mongoose.connect(process.env.MONGO_DB_SRV, {
         useCreateIndex: true,
         useUnifiedTopology: true,
         useNewUrlParser: true,
@@ -23,9 +24,11 @@ try {
     }, (error) => {
         if (error) {
             logger.error('Service [Mongoose]: ', error)
+            process.exit(1);
         } else
             logging.mongoose ? logger.info('Service [Mongoose]: Connected') : null;
     })
 } catch (error) {
     logger.error('Service [Mongoose]: ' + error)
+    process.exit(1);
 }
