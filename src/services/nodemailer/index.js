@@ -10,12 +10,6 @@ const nodemailer = require('nodemailer'),
     { logging } = require('../../config/default.json'),
     logger = require('../winston')
 
-// Check Secret
-if (!process.env.SMTP_HOST || !process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
-    logger.error('Service [NODEMAILER]: SMTP or Email or Password not found for current environment')
-    process.exit(1);
-}
-
 let transporter = nodemailer.createTransport({
     service: process.env.SMTP_HOST || 'gmail',
     port: process.env.SMTP_PORT || 465,
@@ -26,9 +20,10 @@ let transporter = nodemailer.createTransport({
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD,
     },
+    pool: true
 });
 
-module.exports = async (fromMail, toMail, subject, body, senderName) => {
+module.exports = async (fromMail, toMail, subject, body, senderName, attachments = []) => {
     if (!toMail || !subject || !body) {
         return logger.error('Service [NODEMAILER]: Missing Required Parameter')
     }
@@ -39,6 +34,7 @@ module.exports = async (fromMail, toMail, subject, body, senderName) => {
             to: toMail, // list of receivers
             subject: subject, // Subject line
             html: body, // html body
+            attachments: attachments // attachments
         });
 
         logging.nodemailer ? logger.info(`Service [NODEMAILER]: Mail Sent Result => ${JSON.stringify(info)}`) : null;
