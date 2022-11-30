@@ -1,6 +1,6 @@
 {
     "name": "express-forster",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "This template is based on Node JS Express Framework basically made out for reusability purpose.",
     "main": "index.js",
     "scripts": {

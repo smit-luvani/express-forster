@@ -6,14 +6,8 @@
  */
 
 const mongoose = require('mongoose'),
-    { mongoose: mongoose_srv } = require('../../config/secrets'),
     logger = require('../winston'),
     { logging } = require('../../config/default.json')
-
-if (!process.env.MONGO_DB_SRV) {
-    logger.error('Secrets [Mongoose]: srv not found')
-    process.exit(1);
-}
 
 try {
     mongoose.connect(process.env.MONGO_DB_SRV, {
@@ -21,13 +15,10 @@ try {
         useUnifiedTopology: true,
         useNewUrlParser: true,
         useFindAndModify: true
-    }, (error) => {
-        if (error) {
-            logger.error('Service [Mongoose]: ', error)
-            process.exit(1);
-        } else
-            logging.mongoose ? logger.info('Service [Mongoose]: Connected') : null;
     })
+
+    mongoose.connection.on('error', (error) => (logger.error('Service [Mongoose]: ' + error), process.exit(1)))
+    logging.mongoose ? mongoose.connection.once('open', () => logger.info(`Service [Mongoose]: Connected to {${process.env.NODE_ENV}} environment`)) : null;
 } catch (error) {
     logger.error('Service [Mongoose]: ' + error)
     process.exit(1);
