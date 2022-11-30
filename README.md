@@ -26,8 +26,8 @@ Please follow coding indentation and directory structure if you do pull request.
 Install the dependencies and devDependencies and start the server.
 
 Environment File (required):
-- Create environment file in root of the project (i.g. ./)
-- File name must prefix with .env. and the follow by environment name (i.g. .env.development)
+- Create environment file in root of the project (e.g. ./)
+- File name must prefix with .env. and the follow by environment name (e.g. .env.development)
 - Copy the content of .env.example file and paste it in your environment file and change the value as per your requirement.
 
 Start the application/server:
