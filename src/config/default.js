@@ -38,5 +38,14 @@ module.exports = {
             "audio/ogg",
             "audio/mp4"
         ]
-    }
+    },
+    healthCheckPaths: [
+        "/",
+        "/health",
+        '/_ah/start',
+    ],
+    ignoreLogPaths: [
+        '/favicon.ico',
+        '/images/icons/gear.png'
+    ]
 }

@@ -1,7 +1,7 @@
 // Load Environment Variables from the .env file
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV || 'development'}`, override: true })
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = process.env.NODE_ENV;
 process.env.PORT = process.env.PORT;
 
 const logger = require('./src/services/winston');
