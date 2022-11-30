@@ -49,10 +49,11 @@ module.exports = (res, status, message, data, customCode, metadata) => {
 
     // Logging the response
     logger.info(`
---------------- RESPONSE ---------------
+------------------- RESPONSE -------------------
 Request ID: ${res._requestID} | Time: ${responseTime} s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''}
 Message: ${jsonResponse.message}
-Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || null : 'SUCCESS-RESPONSE-SHOULD-BE-HIDDEN'}`)
+Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || null : 'SUCCESS-RESPONSE-HIDDEN'}
+------------------------------------------------`)
 
     // Set Header
     res.setHeader('request-ID', res._requestID)

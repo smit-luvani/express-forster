@@ -47,5 +47,13 @@ module.exports = {
     ignoreLogPaths: [
         '/favicon.ico',
         '/images/icons/gear.png'
+    ],
+    sensitiveKey: [
+        'password',
+        'token',
+        'authorization',
+        'auth',
+        'access_token',
+        'user-agent'
     ]
 }

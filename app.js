@@ -1,4 +1,5 @@
 const { ignoreLogPaths, healthCheckPaths } = require('./src/config/default');
+const { hideSensitiveValue } = require('./src/utils');
 
 const express = require('express'),
     app = express(),
@@ -45,17 +46,17 @@ app.use((req, res, next) => {
         // Log Incoming Request
         if (ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path)) logger.silent = true;
 
-        var headers = { ...req.headers }, body = { ...req.body }, cookies = { ...req.cookies };
+        var headers = hideSensitiveValue(req.headers), body = hideSensitiveValue(req.body), query = hideSensitiveValue(req.query), cookies = hideSensitiveValue(req.cookies);
 
         logger.info(`
---------------- INCOMING REQUEST ---------------------------------------------
+--------------- INCOMING REQUEST ---------------
 Request ID: ${res._requestID} | IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
 Path: ${req.path} | Method: ${req.method}
 Headers: ${JSON.stringify(headers)}
 Body: ${JSON.stringify(body)}
-Query: ${JSON.stringify(req.query)}
+Query: ${JSON.stringify(query)}
 Cookies: ${JSON.stringify(cookies)}
-------------------------------------------------------------------------------`)
+------------------------------------------------`)
 
         next();
     } catch (error) {
@@ -64,25 +65,23 @@ Cookies: ${JSON.stringify(cookies)}
 })
 
 // To Use Service from All Services
-// const { bcryptjs } = require('./src/services/index') // Go To file for Enable/Disable Service
+// const { bcryptjs } = require('./src/services') // Go To file for Enable/Disable Service
 
 // To Use Particular Service
 // const jwt = require('./src/services/jwt')
 
 // App Health Check
-app.get(healthCheckPaths, (req, res) => {
-    response(res, httpStatus.OK, 'Health: OK', {
-        message: 'Health: OK',
-        app: packageInfo.name,
-        version: packageInfo.version,
-        description: packageInfo.description,
-        author: packageInfo.author,
-        license: packageInfo.license,
-        homepage: packageInfo.homepage,
-        repository: packageInfo.repository,
-        contributors: packageInfo.contributors
-    })
-})
+app.get(healthCheckPaths, (req, res) => response(res, httpStatus.OK, 'Health: OK', {
+    message: 'Health: OK',
+    app: packageInfo.name,
+    version: packageInfo.version,
+    description: packageInfo.description,
+    author: packageInfo.author,
+    license: packageInfo.license,
+    homepage: packageInfo.homepage,
+    repository: packageInfo.repository,
+    contributors: packageInfo.contributors
+}))
 
 app.use((req, res) => { return response(res, httpStatus.METHOD_NOT_ALLOWED, 'Invalid API/Method. Please check HTTP Method.') })
 
