@@ -3,7 +3,6 @@
  * @description This Function creates uniform response for application
  */
 
-require("express").response;
 const logger = require("../services/winston"),
     httpStatus = require('http-status'),
     { isInteger } = require('lodash')
@@ -16,7 +15,7 @@ const logger = require("../services/winston"),
  * @param {string | object | [] | Error} data 
  * @param {string} customCode any custom code for response
  * @param {string} metadata additional information
- * @returns 
+ * @returns Directly sends response to client
  */
 module.exports = (res, status, message, data, customCode, metadata) => {
 
@@ -28,8 +27,6 @@ module.exports = (res, status, message, data, customCode, metadata) => {
         return logger.error('Valid Status Code is required')
     }
 
-    if (data instanceof Error) { data = undefined }
-
     // Calculate Response Time from Request Time
     let requestTime = res._requestTime
     let responseTime = (Date.now() - requestTime) / 1000
@@ -39,10 +36,10 @@ module.exports = (res, status, message, data, customCode, metadata) => {
         response: httpStatus[`${status}_NAME`],
         error: (status < 200 && status > 299) ? httpStatus[`${status}_MESSAGE`] : undefined,
         message,
-        data,
+        data: !data instanceof Error && data,
         customCode,
         metadata,
-        _developer: data instanceof Error ? data.stack : undefined,
+        _developer: data instanceof Error && (data?.stack || undefined),
     }
 
     if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
