@@ -5,31 +5,59 @@
  */
 
 const jwt = require('jsonwebtoken'),
-    logger = require('../winston'),
-    { logging } = require('../../config/default.js')
+    logger = require('../winston')
 
-module.exports.sign = (object, expiredIn) => {
+/**
+ * 
+ * @param {jwt.JwtPayload} object 
+ * @param {jwt.SignOptions} options
+ * @returns 
+ */
+module.exports.sign = (object, options) => {
+    if (process.env.JWT_SECRET == undefined) {
+        throw new Error('JWT_SECRET is not found in environment variables. This application is using this service.')
+    }
+
     try {
-        const token = object ? jwt.sign(object, process.env.JWT_SECRET, { expiresIn: expiredIn || '1000d' }) : undefined;
+        const token = jwt.sign(object, process.env.JWT_SECRET, options);
 
-        if (!token) {
-            logger.error('Service [JWT]: String/Object Required to create Sign Token')
-            return false
-        }
-
-        logging.jwt ? logger.info('Service [JWT]: Token: ' + token) : null;
+        logger.info('Service [JWT]: Token Generated');
 
         return token;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)
-        return null
+        return false;
     }
 }
 
+/**
+ * 
+ * @param {string} token 
+ * @returns {jwt.VerifyCallback | boolean}
+ */
 module.exports.verify = (token) => {
+    if (process.env.JWT_SECRET == undefined) {
+        throw new Error('JWT_SECRET is not found in environment variables. This application is using this service.')
+    }
+
     try {
-        logger.info((token, jwt.verify(token, process.env.JWT_SECRET)) ? JSON.stringify(jwt.verify(token, process.env.JWT_SECRET)) : 'Token Decode Failed/Expired')
+        logger.info((token, jwt.verify(token, process.env.JWT_SECRET)) ? '[JWT]: Token Verified' : '[JWT]: Token Verification Failed')
         return token ? jwt.verify(token, process.env.JWT_SECRET) : false;
+    } catch (error) {
+        logger.error('Service [JWT]: ' + error)
+        return false;
+    }
+}
+
+/**
+ * 
+ * @param {string} token 
+ * @param {jwt.DecodeOptions} options
+ * @returns {jwt.JwtPayload}
+ */
+module.exports.decode = (token, options) => {
+    try {
+        return token ? jwt.decode(token, options) : false;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)
         return false;
