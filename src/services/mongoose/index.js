@@ -6,19 +6,16 @@
  */
 
 const mongoose = require('mongoose'),
-    logger = require('../winston'),
-    { logging } = require('../../config/default.js')
+    logger = require('../winston')
 
 try {
+    mongoose.set('strictQuery', false);
     mongoose.connect(process.env.MONGO_DB_SRV, {
-        useCreateIndex: true,
         useUnifiedTopology: true,
         useNewUrlParser: true,
-        useFindAndModify: true
-    })
-
-    mongoose.connection.on('error', (error) => (logger.error('Service [Mongoose]: ' + error), process.exit(1)))
-    logging.mongoose ? mongoose.connection.once('open', () => logger.info(`Service [Mongoose]: Connected to {${process.env.NODE_ENV}} environment`)) : null;
+    }).then(({ connection }) => {
+        logger.info(`Service [Mongoose]: Connected Database \x1b[32m\x1b[1m${connection?.name}\x1b[0m`)
+    }, (error) => (logger.error('Service [Mongoose]: ' + error), process.exit(1)))
 } catch (error) {
     logger.error('Service [Mongoose]: ' + error)
     process.exit(1);
