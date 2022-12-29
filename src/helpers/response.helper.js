@@ -23,8 +23,8 @@ module.exports = (res, status, message, data, customCode, metadata) => {
         return logger.error('Response is required to send response')
     }
 
-    if (!status || !isInteger(status)) {
-        return logger.error('Valid Status Code is required')
+    if (!status || !isInteger(status) || httpStatus[status] === undefined) {
+        return logger.error('Valid Status Code is required. Please check http-status package for valid status codes.')
     }
 
     // Calculate Response Time from Request Time
@@ -36,10 +36,10 @@ module.exports = (res, status, message, data, customCode, metadata) => {
         response: httpStatus[`${status}_NAME`],
         error: (status < 200 && status > 299) ? httpStatus[`${status}_MESSAGE`] : undefined,
         message,
-        data: !data instanceof Error && data,
+        data: data instanceof Error == false ? data : undefined,
         customCode,
         metadata,
-        _developer: data instanceof Error && (data?.stack || undefined),
+        _developer: data instanceof Error == true ? data?.stack : undefined,
     }
 
     if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
@@ -49,7 +49,7 @@ module.exports = (res, status, message, data, customCode, metadata) => {
 ------------------- RESPONSE -------------------
 Request ID: ${res._requestID} | Time: ${responseTime} s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''}
 Message: ${jsonResponse.message}
-Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || null : 'SUCCESS-RESPONSE-HIDDEN'}
+Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || '' : 'SUCCESS-RESPONSE-HIDDEN'}
 ------------------------------------------------`)
 
     // Set Header

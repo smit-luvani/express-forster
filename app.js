@@ -6,7 +6,7 @@ const express = require('express'),
     httpStatus = require('http-status'),
     logger = require('./src/services/winston'),
     packageInfo = require('./package.json'),
-    response = require('./src/utils/response'),
+    { responseHelper: response } = require('./src/helpers'),
     { randomDigit } = require('./src/utils/random')
 
 // Handle Uncaught Exception
