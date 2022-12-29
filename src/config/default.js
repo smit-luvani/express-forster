@@ -4,8 +4,6 @@ module.exports = {
     },
     "logging": {
         "firebaseAdmin": true,
-        "mongoose": true,
-        "jwt": true,
         "bcryptjs": false,
         "razorpay": false,
         "multerS3": true,
