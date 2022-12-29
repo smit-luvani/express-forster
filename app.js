@@ -9,6 +9,9 @@ const express = require('express'),
     response = require('./src/utils/response'),
     { randomDigit } = require('./src/utils/random')
 
+// Handle Uncaught Exception
+process.on('uncaughtException', (error) => console.log(error));
+
 // Attach Request ID to Response Object
 app.use((_, res, next) => {
     res._requestID = randomDigit();
