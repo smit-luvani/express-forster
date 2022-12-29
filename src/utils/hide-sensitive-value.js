@@ -6,7 +6,7 @@ let sensitiveKey = require('../config/default').sensitiveKey
  * - Keywords to manage sensitive keys are defined in ./src/config as 'sensitiveKey'
  * - It doesn't support multi-level/nested object and array
  * @param {object} object 
- * @param {boolean} [removeSensitiveKey=false] Remove sensitive key from object or just replace value with '***'
+ * @param {boolean} [removeSensitiveKey=false] Remove sensitive key-value from object
  * @param {{
  * replaceWith: string, 
  * mutation: boolean,
@@ -22,7 +22,7 @@ const hideSensitiveValue = (object, removeSensitiveKey = false, options, cb) => 
 
     if (typeof object === 'object') {
 
-        if (options.mutation) object = { ...object } // Clone object to avoid mutation
+        if (options.mutation == false) object = { ...object } // Clone object to avoid mutation
 
         for (let key in object) {
             if (sensitiveKey.includes(key)) {
