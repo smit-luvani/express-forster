@@ -14,7 +14,7 @@ let sensitiveKey = require('../config/default').sensitiveKey
  * @callback cb Callback function
  * @returns {object} Sanitized Object
  */
-const hideSensitiveValue = (object, removeSensitiveKey = false, options, cb) => {
+module.exports = (object, removeSensitiveKey = false, options, cb) => {
     !options ? options = {
         replaceWith: '***',
         mutation: false
@@ -39,5 +39,3 @@ const hideSensitiveValue = (object, removeSensitiveKey = false, options, cb) => 
     }
     return object
 }
-
-module.exports = hideSensitiveValue;
