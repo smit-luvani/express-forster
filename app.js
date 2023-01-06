@@ -10,7 +10,7 @@ const express = require('express'),
     { randomDigit } = require('./src/utils/random')
 
 // Handle Uncaught Exception
-process.on('uncaughtException', (error) => console.log(error));
+process.on('uncaughtException', (error) => logger.error(error.stack || error.message));
 
 // Attach Request ID to Response Object
 app.use((_, res, next) => {

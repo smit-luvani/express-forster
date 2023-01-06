@@ -5,8 +5,7 @@ module.exports = {
     "logging": {
         "firebaseAdmin": true,
         "razorpay": false,
-        "multerS3": true,
-        "nodemailer": true
+        "multerS3": true
     },
     "bcryptjs": {
         "salt": 6
