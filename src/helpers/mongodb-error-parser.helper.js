@@ -1,5 +1,6 @@
 const { Error } = require("mongoose");
 const httpStatus = require("http-status");
+const { winston: logger } = require("../services");
 
 /**
  * @author Smit Luvani
@@ -10,9 +11,12 @@ const httpStatus = require("http-status");
  * code: number,
  * httpStatus: number,
  * message: string,
- * duplicateKey?: string}}
+ * duplicateKey?: string,
+ * stack: string,
+ * _parser: string}}
  */
 module.exports = (error) => {
+    logger.info("Helpers > MongoDB Error Parser")
     if (!error instanceof Error) {
         return error;
     }
@@ -21,7 +25,9 @@ module.exports = (error) => {
         name: error.name,
         code: error.code,
         message: error.message,
-        httpStatus: httpStatus.INTERNAL_SERVER_ERROR
+        httpStatus: httpStatus.INTERNAL_SERVER_ERROR,
+        stack: error.stack,
+        _parser: 'Helpers > MongoDB Error Parser',
     };
 
     switch (error.code) {
