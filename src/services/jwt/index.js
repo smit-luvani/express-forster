@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken'),
  * 
  * @param {jwt.JwtPayload} object 
  * @param {jwt.SignOptions} options
- * @returns 
+ * @returns {string | Error}
  */
 module.exports.sign = (object, options) => {
     if (process.env.JWT_SECRET == undefined) {
