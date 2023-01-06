@@ -1,18 +1,13 @@
-/**
- * @author Smit Luvani
- * @description SMTP Mailer
- * @module https://www.npmjs.com/package/nodemailer
- * @tutorial https://nodemailer.com/about/
- * @example https://github.com/nodemailer/nodemailer/tree/master/examples
- */
-
 const nodemailer = require('nodemailer'),
-    { logging } = require('../../config/default.js'),
     logger = require('../winston')
 
+if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
+    throw new Error('Service [NODEMAILER]: SMTP Configuration Missing in environment variables')
+}
+
 let transporter = nodemailer.createTransport({
-    service: process.env.SMTP_HOST || 'gmail',
-    port: process.env.SMTP_PORT || 465,
+    service: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     secure: true,
     debug: true,
     logger: true,
@@ -23,14 +18,39 @@ let transporter = nodemailer.createTransport({
     pool: true
 });
 
-module.exports = async (fromMail, toMail, subject, body, senderName, attachments = []) => {
+/**
+ * @author Smit Luvani
+ * @description SMTP Mailer
+ * @module https://www.npmjs.com/package/nodemailer
+ * @tutorial https://nodemailer.com/about/
+ * @example https://github.com/nodemailer/nodemailer/tree/master/examples
+ * 
+ * @param {{
+ * fromMail: String,
+ * toMail: String,
+ * subject: String,
+ * body: String,
+ * senderName: String,
+ * attachments: Array
+ * }} options
+ */
+module.exports = async (options) => {
+    let {
+        fromMail = 'Express Forster',
+        toMail,
+        subject,
+        body,
+        senderName,
+        attachments = []
+    } = options;
+
     if (!toMail || !subject || !body) {
         return logger.error('Service [NODEMAILER]: Missing Required Parameter')
     }
 
     try {
         let info = await transporter.sendMail({
-            from: `${senderName || fromMail || 'Express Forster'}`, // sender address
+            from: `${senderName || fromMail}`, // sender address
             to: toMail, // list of receivers
             subject: subject, // Subject line
             html: body, // html body
