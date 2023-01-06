@@ -27,6 +27,10 @@ module.exports = (res, status, message, data, customCode, metadata) => {
         return logger.error('Valid Status Code is required. Please check http-status package for valid status codes.')
     }
 
+    if (data instanceof Error) {
+        logger.error(data.stack);
+    }
+
     // Calculate Response Time from Request Time
     let requestTime = res._requestTime
     let responseTime = (Date.now() - requestTime) / 1000
