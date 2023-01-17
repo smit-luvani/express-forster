@@ -1,10 +1,10 @@
 {
     "name": "express-forster",
-    "version": "1.6.0",
-    "description": "This template is based on Node JS Express Framework basically made out for reusability purpose.",
-    "main": "index.js",
+    "version": "1.7.0",
+    "description": "Quick start Express JS based boilerplate template for your next project.",
+    "main": "server.js",
     "scripts": {
-        "start": "nodemon server.js"
+        "start": "nodemon server.js --trace-warning"
     },
     "repository": {
         "type": "git",

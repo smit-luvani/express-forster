@@ -6,6 +6,7 @@
 const logger = require("../services/winston"),
     httpStatus = require('http-status'),
     { isInteger } = require('lodash')
+const { IncomingMessage } = require('http')
 
 /**
  * @description This function is used to create uniform response for application
@@ -14,8 +15,8 @@ const logger = require("../services/winston"),
  * @param {string} message message to be sent in response
  * @param {string | object | [] | Error} data 
  * @param {string} customCode any custom code for response
- * @param {string} metadata additional information
- * @returns Directly sends response to client
+ * @param {string | object | number} metadata additional information
+ * @returns {void} Directly sends response to client
  */
 module.exports = (res, status, message, data, customCode, metadata) => {
 
@@ -32,32 +33,29 @@ module.exports = (res, status, message, data, customCode, metadata) => {
     }
 
     // Calculate Response Time from Request Time
-    let requestTime = res._requestTime
-    let responseTime = (Date.now() - requestTime) / 1000
+    let responseTime = (Date.now() - IncomingMessage.prototype.requestTime) / 1000
 
     let jsonResponse = {
         status,
         response: httpStatus[`${status}_NAME`],
-        error: (status < 200 && status > 299) ? httpStatus[`${status}_MESSAGE`] : undefined,
         message,
-        data: data instanceof Error == false ? data : undefined,
+        data: data && data instanceof Error == false ? data : undefined,
         customCode,
         metadata,
-        _developer: data instanceof Error == true ? data?.stack : undefined,
+        error: data instanceof Error == true ? data?.stack : undefined,
     }
 
     if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
 
+    const developerLog = jsonResponse.error ? `\nError: ${jsonResponse.error}` : ''
+
     // Logging the response
-    logger.info(`
-------------------- RESPONSE -------------------
-Request ID: ${res._requestID} | Time: ${responseTime} s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''}
-Message: ${jsonResponse.message}
-Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || '' : 'SUCCESS-RESPONSE-HIDDEN'}
-------------------------------------------------`)
+    logger.info(`RESPONSE
+Process Time: ${responseTime}s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} | Message: ${jsonResponse.message} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''}
+Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || '' : 'SUCCESS-RESPONSE-HIDDEN'} ${developerLog}`)
 
     // Set Header
-    res.setHeader('request-ID', res._requestID)
+    res.setHeader('X-Request-ID', IncomingMessage.prototype?.requestId)
 
     // Send Response
     return res.status(parseInt(status)).json(jsonResponse)

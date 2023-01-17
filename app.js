@@ -8,14 +8,15 @@ const express = require('express'),
     packageInfo = require('./package.json'),
     { responseHelper: response } = require('./src/helpers'),
     { randomDigit } = require('./src/utils/random')
+const { IncomingMessage } = require('http')
 
 // Handle Uncaught Exception
 process.on('uncaughtException', (error) => logger.error(error.stack || error.message));
 
-// Attach Request ID to Response Object
-app.use((_, res, next) => {
-    res._requestID = randomDigit();
-    res._requestTime = new Date();
+// Set Request ID and Time
+app.use((next) => {
+    IncomingMessage.prototype.requestId = 'REQ-' + randomDigit();
+    IncomingMessage.prototype.requestTime = new Date();
     next()
 })
 
@@ -49,17 +50,18 @@ app.use((req, res, next) => {
         // Log Incoming Request
         if (ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path)) logger.silent = true;
 
-        var headers = hideSensitiveValue(req.headers), body = hideSensitiveValue(req.body), query = hideSensitiveValue(req.query), cookies = hideSensitiveValue(req.cookies);
+        var headers = hideSensitiveValue(req.headers),
+            body = req.body ? hideSensitiveValue(req.body) : {},
+            query = hideSensitiveValue(req.query),
+            cookies = hideSensitiveValue(req.cookies);
 
-        logger.info(`
---------------- INCOMING REQUEST ---------------
-Request ID: ${res._requestID} | IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
-Path: ${req.path} | Method: ${req.method}
-Headers: ${JSON.stringify(headers)}
-Body: ${JSON.stringify(body)}
-Query: ${JSON.stringify(query)}
-Cookies: ${JSON.stringify(cookies)}
-------------------------------------------------`)
+        const headerLog = '' || `\nHeaders: ${JSON.stringify(headers)}`;
+        const cookieLog = Object.keys(req.cookies).length > 0 ? `\nCookies: ${JSON.stringify(cookies)}` : '';
+        const queryLog = Object.keys(req.query).length > 0 ? `\nQuery: ${JSON.stringify(query)}` : '';
+        const bodyLog = req.body ? `\nBody: ${JSON.stringify(body)}` : '';
+
+        logger.info(`REQUEST | IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
+Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} ${bodyLog}`)
 
         next();
     } catch (error) {
@@ -84,7 +86,7 @@ app.get(healthCheckPaths, (req, res) => response(res, httpStatus.OK, 'Health: OK
     homepage: packageInfo.homepage,
     repository: packageInfo.repository,
     contributors: packageInfo.contributors
-}))
+}, '#ExpressForsterHealthCheck', { project: 'Express-Forster', health_check_paths: healthCheckPaths }))
 
 app.use((req, res) => { return response(res, httpStatus.NOT_FOUND, 'The request route does not exist or the method might be different.') })
 

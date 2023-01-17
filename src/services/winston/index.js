@@ -10,6 +10,7 @@
 const winston = require('winston'),
     { winston: winston_logger } = require('../../config/default.js')
 const hideSensitiveValue = require('../../utils/hide-sensitive-value')
+const { IncomingMessage } = require('http')
 
 const { combine, timestamp, printf, json } = winston.format;
 
@@ -19,7 +20,8 @@ const logFormat = combine(
     printf(({ level, message, timestamp }) => {
         if (typeof message === 'object') message = hideSensitiveValue(message)
         typeof message === 'object' ? message = JSON.stringify(message) : null;
-        return `${timestamp} [${level}]: ${String(message)}`;
+        const ReqId = IncomingMessage.prototype?.requestId;
+        return `${timestamp}${ReqId ? ' [' + ReqId + ']' : ''} [${level}]: ${String(message)}`;
     }))
 
 const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
