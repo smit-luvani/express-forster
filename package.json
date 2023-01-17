@@ -10,6 +10,7 @@
         "type": "git",
         "url": "https://github.com/smit-luvani/express-forster"
     },
+    "keywords": ["express js","boilerplate","node js","express forster","template"],
     "author": "Smit Luvani",
     "license": "MIT License",
     "homepage": "https://github.com/smit-luvani/express-forster#readme",
