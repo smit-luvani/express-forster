@@ -14,7 +14,7 @@ const { IncomingMessage } = require('http')
 process.on('uncaughtException', (error) => logger.error(error.stack || error.message));
 
 // Set Request ID and Time
-app.use((next) => {
+app.use((req, res, next) => {
     IncomingMessage.prototype.requestId = 'REQ-' + randomDigit();
     IncomingMessage.prototype.requestTime = new Date();
     next()

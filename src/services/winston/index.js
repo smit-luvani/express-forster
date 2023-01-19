@@ -1,7 +1,18 @@
 /**
  * @author Smit Luvani
  * @description Winston is use to log in development environment
+ * Log levels
+ *  - error: 0
+ *  - warn: 1
+ *  - info: 2
+ *  - http: 3
+ *  - verbose: 4
+ *  - debug: 5
+ *  - silly: 6
  * @module https://www.npmjs.com/package/winston
+ * @tutorial https://github.com/winstonjs/winston
+ * 
+ * @returns {winston.createLogger}
  */
 
 // Winston Service
