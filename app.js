@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 
     try {
         // Log Incoming Request
-        if (ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path)) logger.silent = true;
+        ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path) ? logger.silent = true : logger.silent = false;
 
         var headers = hideSensitiveValue(req.headers),
             body = req.body ? hideSensitiveValue(req.body) : {},
