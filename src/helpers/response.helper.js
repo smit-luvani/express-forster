@@ -47,12 +47,13 @@ module.exports = (res, status, message, data, customCode, metadata) => {
 
     if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
 
+    const dataLog = (status < 200 || status > 299) ? (jsonResponse.data ? '\nData:' + JSON.stringify(hideSensitiveValue(jsonResponse.data)) : '') : 'Data: SUCCESS-RESPONSE-HIDDEN'
     const developerLog = jsonResponse.error ? `\nError: ${jsonResponse.error}` : ''
 
     // Logging the response
-    logger.info(`RESPONSE
-Process Time: ${responseTime}s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} | Message: ${jsonResponse.message} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''}
-Data: ${(status < 200 || status > 299) ? JSON.stringify(jsonResponse.data) || '' : 'SUCCESS-RESPONSE-HIDDEN'} ${developerLog}`)
+    logger.info(`===================== RESPONSE ===============================
+Process Time: ${responseTime}s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} | Message: ${jsonResponse.message} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''} ${dataLog} ${developerLog}
+==============================================================`)
 
     // Set Header
     res.setHeader('X-Request-ID', IncomingMessage.prototype?.requestId)

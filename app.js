@@ -60,8 +60,10 @@ app.use((req, res, next) => {
         const queryLog = Object.keys(req.query).length > 0 ? `\nQuery: ${JSON.stringify(query)}` : '';
         const bodyLog = req.body ? `\nBody: ${JSON.stringify(body)}` : '';
 
-        logger.info(`REQUEST | IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
-Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} ${bodyLog}`)
+        logger.info(`======================= REQUEST ============================= 
+IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
+Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} ${bodyLog}
+==============================================================`)
 
         next();
     } catch (error) {
