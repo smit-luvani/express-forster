@@ -36,7 +36,7 @@ let transporter = nodemailer.createTransport({
  */
 module.exports = async (options) => {
     let {
-        fromMail = 'Express Forster',
+        fromMail,
         toMail,
         subject,
         body,
@@ -44,17 +44,18 @@ module.exports = async (options) => {
         attachments = []
     } = options;
 
-    if (!toMail || !subject || !body) {
-        return logger.error('Service [NODEMAILER]: Missing Required Parameter')
+    if (!fromMail || !toMail || !subject || !body) {
+        return logger.error('Service [NODEMAILER]: Missing Required Parameter in options. [fromMail, toMail, subject, body]')
     }
 
     try {
         let info = await transporter.sendMail({
-            from: `${senderName || fromMail}`, // sender address
+            from: senderName ? senderName + ` <${fromMail}>` : fromMail, // sender address
             to: toMail, // list of receivers
             subject: subject, // Subject line
             html: body, // html body
-            attachments: attachments // attachments
+            attachments: attachments, // attachments
+            sender: senderName,
         });
 
         logging.nodemailer ? logger.info(`Service [NODEMAILER]: Mail Sent Result => ${JSON.stringify(info)}`) : null;

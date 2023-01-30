@@ -25,7 +25,7 @@ const transporter = nodemailer.createTransport(nodemailerSendGrid({ apiKey: proc
  */
 module.exports = async (options, cb) => {
     let {
-        fromMail = 'info@yoobux.com',
+        fromMail,
         toMail,
         subject,
         body,
@@ -34,23 +34,25 @@ module.exports = async (options, cb) => {
     } = options;
 
     if (!toMail || !subject || !body) {
-        return logger.error('Service [NODEMAILER-SendGrid]: Missing Required Parameter')
+        return logger.error('Service [NODEMAILER-SENDGRID]: Missing Required Parameter. fromMail, toMail, subject, body are required.')
     }
 
     try {
         let info = await transporter.sendMail({
-            from: `${senderName || fromMail || 'Express Forster'}`, // sender address
+            from: senderName ? senderName + ` <${fromMail}>` : fromMail, // sender address
             to: toMail, // list of receivers
             subject: subject, // Subject line
             html: body, // html body
-            attachments: attachments // attachments
+            attachments: attachments, // attachments
+            sender: senderName,
         });
 
         if (cb) cb(null, info)
+        logger.silly('Service [NODEMAILER-SENDGRID]: Success')
         return true;
     } catch (error) {
         if (cb) throw cb(error)
-        logger.error('Service [NODEMAILER-SendGrid]: ', error.stack)
+        logger.error('Service [NODEMAILER-SENDGRID]: ', error)
         return false;
     }
 }
