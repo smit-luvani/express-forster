@@ -13,7 +13,7 @@ const CORS = require('cors');
 const { cors: corsConfig } = require('./src/config/default');
 
 // Handle Uncaught Exception
-process.on('uncaughtException', (error) => logger.error(error.stack || error.message));
+process.on('uncaughtException', (error) => logger.error(error?.stack || error?.message || error));
 
 // CORS - Cross Origin Resource Sharing
 app.use(CORS(corsConfig));
