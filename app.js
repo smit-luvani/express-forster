@@ -1,6 +1,3 @@
-const { ignoreLogPaths, healthCheckPaths } = require('./src/config/default');
-const { hideSensitiveValue } = require('./src/utils');
-
 const express = require('express'),
     app = express(),
     httpStatus = require('http-status'),
@@ -11,6 +8,8 @@ const express = require('express'),
 const { IncomingMessage } = require('http')
 const CORS = require('cors');
 const { cors: corsConfig } = require('./src/config/default');
+const { ignoreLogPaths, healthCheckPaths } = require('./src/config/default');
+const { hideSensitiveValue } = require('./src/utils');
 
 // Handle Uncaught Exception
 process.on('uncaughtException', (error) => logger.error(error?.stack || error?.message || error));
