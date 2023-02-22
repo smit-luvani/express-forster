@@ -8,8 +8,7 @@
 const AWS = require('../aws-sdk'),
     multer = require('multer'),
     multerS3 = require('multer-s3'),
-    { awsSDK: awsSDKConfig, multer: multerConfig, logging } = require('../../config/default.js'),
-    logger = require('../winston'),
+    { awsSDK: awsSDKConfig, multer: multerConfig } = require('../../config/default.js'),
     { v4: uuidv4 } = require('uuid')
 
 // AWS Configuration
@@ -27,14 +26,22 @@ const storageS3 = multerS3({
     },
     key: (req, file, cb) => {
 
-        // Directory & File Name
-        let directory = awsSDKConfig.directory.files;
-        let file_name = `FILE-${uuidv4()}.${file.mimetype.split('/')[1]}`;
+        const body = JSON.parse(JSON.stringify(req.body));
 
-        logging.multerS3 ? logger.debug(`File: ${awsSDKConfig.directory.files}/FILE-${uuidv4()}.${file.mimetype.split('/')[1]}`) : null;
+        // Directory & File Name
+        let directory = directoryAllocation(req.params.directory || body.directory);
+
+        // -- Append original filename to upload file name
+        let originalFilename = String(file.originalname).substring(0, String(file.originalname).lastIndexOf('.'))
+        originalFilename = originalFilename.replace(/\s/g, '-'); // Replace All Spaces with -
+        originalFilename = originalFilename.replace(/[^a-zA-Z0-9-_]/g, ''); // Remove All Special Characters
+        originalFilename = originalFilename.replace(/\-{2,}/g, '-'); // Replace Multiple - with single -
+        originalFilename = originalFilename.replace(/^\-+|\-+$/g, ''); // Remove - from start and end of string
+
+        let file_name = `FILE-${originalFilename || ''}-${uuidv4()}.${file.mimetype.split('/')[1]}`;
 
         // Callback Returns Path + Filename
-        cb(null, `${directory}/${file_name}`);
+        return cb(null, `${directory}/${file_name}`);
     }
 })
 
@@ -46,6 +53,14 @@ const fileFilter = (req, file, cb) => {
         cb(null, false, new Error('Invalid File Type'))
     }
     cb(null, true)
+}
+
+// Directory Allocation
+const directoryAllocation = (directory) => {
+    const environment = process.env.NODE_ENV;
+    let storageDirectory = environment;
+    storageDirectory += `/${awsSDKConfig.directory[directory] || 'files'}`;
+    return storageDirectory;
 }
 
 // Multer

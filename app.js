@@ -94,6 +94,10 @@ app.get(healthCheckPaths, (req, res) => response(res, httpStatus.OK, 'Health: OK
     contributors: packageInfo.contributors
 }, '#ExpressForsterHealthCheck', { project: 'Express-Forster', health_check_paths: healthCheckPaths }))
 
+// Import Routes
+const routes = require('./src/routes');
+app.use(routes);
+
 app.use((req, res) => { return response(res, httpStatus.NOT_FOUND, 'The request route does not exist or the method might be different.') })
 
 module.exports = app;

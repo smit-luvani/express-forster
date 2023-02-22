@@ -7,13 +7,13 @@
 
 module.exports.winston = require('./winston')
 module.exports.logger = this.winston;
+// module.exports.multerS3 = require('./multer-s3') // Remove comment when enabling file-upload route
+// module.exports.multer = require('./multer')
 // module.exports.mongoose = require('./mongoose')
 // module.exports.firebaseAdmin = require('./firebase-admin')
 // module.exports.jwt = require('./jwt')
 // module.exports.bcryptjs = require('./bcryptjs')
 // module.exports.razorpay = require('./razorpay')
 // module.exports.aws = require('./aws-sdk')
-// module.exports.multerS3 = require('./multer-s3')
-// module.exports.multer = require('./multer')
 // module.exports.nodemailer = require('./nodemailer')
 // module.exports.nodemailerSendGrid = require('./nodemailer/sendgrid')
