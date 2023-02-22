@@ -9,9 +9,14 @@ const express = require('express'),
     { responseHelper: response } = require('./src/helpers'),
     { randomDigit } = require('./src/utils/random')
 const { IncomingMessage } = require('http')
+const CORS = require('cors');
+const { cors: corsConfig } = require('./src/config/default');
 
 // Handle Uncaught Exception
 process.on('uncaughtException', (error) => logger.error(error.stack || error.message));
+
+// CORS - Cross Origin Resource Sharing
+app.use(CORS(corsConfig));
 
 // Set Request ID and Time
 app.use((req, res, next) => {
