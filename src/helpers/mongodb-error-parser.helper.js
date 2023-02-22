@@ -1,6 +1,6 @@
 const { Error } = require("mongoose");
 const httpStatus = require("http-status");
-const { winston: logger } = require("../services");
+const { logger } = require("../services");
 
 /**
  * @author Smit Luvani
@@ -12,8 +12,8 @@ const { winston: logger } = require("../services");
  * httpStatus: number,
  * message: string,
  * duplicateKey?: string,
- * stack: string,
- * _parser: string}}
+ * _json?: object
+ * }}
  */
 module.exports = (error) => {
     logger.info("Helpers > MongoDB Error Parser")
@@ -30,11 +30,21 @@ module.exports = (error) => {
         _parser: 'Helpers > MongoDB Error Parser',
     };
 
+    try {
+        returnObject._json = JSON.parse(JSON.stringify(error))
+    } catch (error) { }
+
     switch (error.code) {
         case 11000:
             returnObject.duplicateKey = error?.keyValue ? Object.keys(error.keyValue) : undefined;
             returnObject.message = `${returnObject?.duplicateKey?.join(',')} already exists.`;
             returnObject.httpStatus = httpStatus.BAD_REQUEST;
+            break;
+    }
+
+    switch (error.name) {
+        case 'CastError':
+            returnObject.message = `${error.path} is invalid.` + ` ${error.value} is not a valid ${error.kind}. `;
             break;
     }
 

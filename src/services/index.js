@@ -6,6 +6,7 @@
  */
 
 module.exports.winston = require('./winston')
+module.exports.logger = this.winston;
 // module.exports.mongoose = require('./mongoose')
 // module.exports.firebaseAdmin = require('./firebase-admin')
 // module.exports.jwt = require('./jwt')
