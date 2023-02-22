@@ -7,6 +7,7 @@ const logger = require("../services/winston"),
     httpStatus = require('http-status'),
     { isInteger } = require('lodash')
 const { IncomingMessage } = require('http')
+const hideSensitiveValue = require("../utils/hide-sensitive-value")
 
 /**
  * @description This function is used to create uniform response for application
