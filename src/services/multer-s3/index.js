@@ -5,18 +5,15 @@
  * @module https://www.npmjs.com/package/multer
  */
 
-const AWS = require('../aws-sdk'),
+const S3Client = require('../aws').S3Client,
     multer = require('multer'),
     multerS3 = require('multer-s3'),
     { awsSDK: awsSDKConfig, multer: multerConfig } = require('../../config/default.js'),
     { v4: uuidv4 } = require('uuid')
 
-// AWS Configuration
-const s3 = new AWS.S3()
-
 // S3 Storage
 const storageS3 = multerS3({
-    s3: s3,
+    s3: S3Client,
     bucket: awsSDKConfig.bucketName,
     contentType: multerS3.AUTO_CONTENT_TYPE,
     acl: awsSDKConfig.acl,
