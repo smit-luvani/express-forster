@@ -1,3 +1,5 @@
+console.clear() // Comment this for Continuos logging
+
 // Load Environment Variables from the .env file
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV || 'development'}`, override: true })
 
@@ -7,8 +9,6 @@ const logger = require('./src/services/winston');
 const packageJson = require('./package.json');
 const expressApp = require('./app');
 const http = require('http');
-
-console.clear() // Comment this for Continuos logging
 
 // HTTP Server
 const server = http.createServer(expressApp);

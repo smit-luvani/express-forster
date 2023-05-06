@@ -8,6 +8,8 @@ const logger = require("../services/winston"),
     { isInteger } = require('lodash')
 const { IncomingMessage } = require('http')
 const hideSensitiveValue = require("../utils/hide-sensitive-value")
+const JSONSort = require("../utils/json-sort");
+const sortOption = { data: true, metadata: false }
 
 /**
  * @description This function is used to create uniform response for application
@@ -21,44 +23,48 @@ const hideSensitiveValue = require("../utils/hide-sensitive-value")
  */
 module.exports = (res, status, message, data, customCode, metadata) => {
 
-    if (!res) {
-        return logger.error('Response is required to send response')
-    }
+    try {
+        if (!res) {
+            return logger.error('Response is required to send response')
+        }
 
-    if (!status || !isInteger(status) || httpStatus[status] === undefined) {
-        return logger.error('Valid Status Code is required. Please check http-status package for valid status codes.')
-    }
+        if (!status || !isInteger(status) || httpStatus[status] === undefined) {
+            return logger.error('Valid Status Code is required. Please check http-status package for valid status codes.')
+        }
 
-    if (data instanceof Error) {
-        logger.error(data.stack);
-    }
+        if (data instanceof Error) {
+            logger.error(data.stack);
+        }
 
-    // Calculate Response Time from Request Time
-    let responseTime = (Date.now() - IncomingMessage.prototype.requestTime) / 1000
+        // Calculate Response Time from Request Time
+        let responseTime = (Date.now() - IncomingMessage.prototype.requestTime) / 1000
 
-    let jsonResponse = {
-        status,
-        response: httpStatus[`${status}_NAME`],
-        message,
-        data: data && data instanceof Error == false ? data : undefined,
-        customCode,
-        metadata,
-        error: data instanceof Error == true ? data?.stack : undefined,
-    }
+        var jsonResponse = {
+            status,
+            response: httpStatus[`${status}_NAME`],
+            message,
+            data: data && data instanceof Error == false ? (sortOption.data ? JSONSort(data) : data) : undefined,
+            customCode,
+            metadata: (metadata && typeof metadata == 'object' && sortOption.metadata) ? JSONSort(metadata) : metadata,
+            error: data instanceof Error == true ? data?.stack : undefined,
+        }
 
-    if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
+        if (status == httpStatus.INTERNAL_SERVER_ERROR) logger.silent = false
 
-    const dataLog = (status < 200 || status > 299) ? (jsonResponse.data ? '\nData:' + JSON.stringify(hideSensitiveValue(jsonResponse.data)) : '') : 'Data: SUCCESS-RESPONSE-HIDDEN'
-    const developerLog = jsonResponse.error ? `\nError: ${jsonResponse.error}` : ''
+        const dataLog = (status < 200 || status > 299) ? (jsonResponse.data ? '\nData:' + JSON.stringify(hideSensitiveValue(jsonResponse.data)) : '') : 'Data: SUCCESS-RESPONSE-HIDDEN'
+        const developerLog = jsonResponse.error ? `\nError: ${jsonResponse.error}` : ''
 
-    // Logging the response
-    logger.info(`===================== RESPONSE ===============================
+        // Logging the response
+        logger.info(`===================== RESPONSE ===============================
 Process Time: ${responseTime}s | Status: ${jsonResponse.status} | Response: ${jsonResponse.response} | Message: ${jsonResponse.message} ${jsonResponse.customCode ? '| Custom Code: ' + jsonResponse.customCode : ''} ${dataLog} ${developerLog}
 ==============================================================`)
 
-    // Set Header
-    res.setHeader('X-Request-ID', IncomingMessage.prototype?.requestId)
+        // Set Header
+        res.setHeader('X-Request-ID', IncomingMessage.prototype?.requestId)
 
-    // Send Response
-    return res.status(parseInt(status)).json(jsonResponse)
+        // Send Response
+        return res.status(parseInt(status)).json(jsonResponse)
+    } catch (error) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.stack })
+    }
 }
