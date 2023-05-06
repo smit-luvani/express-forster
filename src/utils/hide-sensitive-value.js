@@ -1,10 +1,9 @@
-let sensitiveKey = require('../config/default').sensitiveKey
+const sensitiveKey = require('../config/default').sensitiveKey
 
 /**
  * @author Smit Luvani
  * @description Sanitize Key-Values before logging
  * - Keywords to manage sensitive keys are defined in ./src/config as 'sensitiveKey'
- * - It doesn't support multi-level/nested object and array
  * @param {object} object 
  * @param {boolean} [removeSensitiveKey=false] Remove sensitive key-value from object
  * @param {{
@@ -14,28 +13,34 @@ let sensitiveKey = require('../config/default').sensitiveKey
  * @callback cb Callback function
  * @returns {object} Sanitized Object
  */
-module.exports = (object, removeSensitiveKey = false, options, cb) => {
-    !options ? options = {
-        replaceWith: '***',
-        mutation: false
-    } : null;
+function hideSensitiveValue(object, removeSensitiveKey = false, options, cb) {
+    if (!options) options = { replaceWith: '***', mutation: false }
 
-    if (typeof object === 'object') {
+    if (cb && typeof cb !== 'function') throw new Error('[hideSensitiveValue]: Callback function is not a function')
 
-        if (options.mutation == false) object = { ...object } // Clone object to avoid mutation
+    try {
+        if (typeof object === 'object') {
 
-        for (let key in object) {
-            if (sensitiveKey.includes(key)) {
-                if (removeSensitiveKey) {
-                    delete object[key]
-                } else {
-                    object[key] = options?.replaceWith || '***'
+            if (options.mutation == false) object = JSON.parse(JSON.stringify(object)) // Clone Object
+
+            for (let key in object) {
+                if (typeof object[key] === 'object') {
+                    object[key] = hideSensitiveValue(object[key], removeSensitiveKey, options)
+                } else if (sensitiveKey.includes(key)) {
+                    if (removeSensitiveKey) {
+                        delete object[key]
+                    } else {
+                        object[key] = options?.replaceWith || '***'
+                    }
                 }
             }
         }
+
+        return cb ? cb(object) : object;
+
+    } catch (error) {
+        throw cb ? cb(null, error) : error
     }
-    if (cb) {
-        cb(object)
-    }
-    return object
 }
+
+module.exports = hideSensitiveValue;
