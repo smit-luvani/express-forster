@@ -5,8 +5,7 @@
  * - Enable/Disable Service wise Logging in config/default.js file
  */
 
-module.exports.winston = require('./winston')
-module.exports.logger = this.winston;
+module.exports.logger = require('./winston')
 // module.exports.multerS3 = require('./multer-s3') // Remove comment when enabling file-upload route
 // module.exports.multer = require('./multer')
 // module.exports.mongoose = require('./mongoose')
@@ -17,3 +16,5 @@ module.exports.logger = this.winston;
 // module.exports.aws = require('./aws-sdk')
 // module.exports.nodemailer = require('./nodemailer')
 // module.exports.nodemailerSendGrid = require('./nodemailer/sendgrid')
+// module.exports.stripe = require('./stripe')
+// module.exports.redis = require('./redis')

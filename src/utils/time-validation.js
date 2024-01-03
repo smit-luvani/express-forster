@@ -2,7 +2,6 @@
  * @author Smit Luvani
  * @description Time Validation
  */
-
 const logger = require("../services/winston")
 
 module.exports.minuteHour = (value) => {

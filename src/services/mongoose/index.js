@@ -7,6 +7,7 @@
 
 const mongoose = require('mongoose'),
     logger = require('../winston')
+const fs = require('fs');
 
 try {
     mongoose.set('strictQuery', false);
@@ -14,9 +15,19 @@ try {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     }).then(({ connection }) => {
-        logger.info(`Service [Mongoose]: Connected Database \x1b[32m\x1b[1m${connection?.name}\x1b[0m`)
-    }, (error) => (logger.error('Service [Mongoose]: ' + error), process.exit(1)))
+        logger.info(`Service [Mongoose]: Connected Database \x1b[32m\x1b[1m${connection?.name}\x1b[0m`);
+
+        // Load all models
+        fs.readdirSync(process.cwd() + '/src/database').forEach(function (file) {
+            if (~file.indexOf('.js')) require(process.cwd() + '/src/database/' + file);
+        });
+    }, (error) => {
+        console.error(error)
+        logger.error('Service [Mongoose]: ' + error)
+        process.exit(1)
+    })
 } catch (error) {
+    console.error(error)
     logger.error('Service [Mongoose]: ' + error)
     process.exit(1);
 }

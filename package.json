@@ -1,47 +1,49 @@
 {
-    "name": "express-forster",
-    "version": "1.7.0",
-    "description": "Quick start Express JS based boilerplate template for your next project.",
-    "main": "server.js",
-    "scripts": {
-        "start": "nodemon server.js --trace-warning"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/smit-luvani/express-forster"
-    },
-    "keywords": [
-        "express js",
-        "boilerplate",
-        "node js",
-        "express forster",
-        "template"
-    ],
-    "author": "Smit Luvani",
-    "license": "MIT License",
-    "homepage": "https://github.com/smit-luvani/express-forster#readme",
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.310.0",
-        "bcryptjs": "^2.4.3",
-        "bestzip": "^2.2.0",
-        "cookie-parser": "^1.4.5",
-        "cors": "^2.8.5",
-        "dotenv": "^16.0.3",
-        "express": "^4.17.1",
-        "express-fileupload": "^1.2.0",
-        "firebase-admin": "^11.3.0",
-        "http-status": "^1.4.2",
-        "jsonwebtoken": "^9.0.0",
-        "lodash": "^4.17.21",
-        "mongoose": "^6.0.8",
-        "multer": "^1.4.5-lts.1",
-        "multer-s3": "^3.0.1",
-        "nodemailer": "^6.6.5",
-        "nodemailer-sendgrid": "^1.0.3",
-        "nodemon": "^2.0.13",
-        "razorpay": "^2.0.7",
-        "unirest": "^0.6.0",
-        "uuid": "^9.0.0",
-        "winston": "^3.3.3"
-    }
+	"name": "express-forster",
+	"version": "2.0.0",
+	"description": "Quick start Express JS based boilerplate template for your next project.",
+	"main": "server.js",
+	"scripts": {
+		"start": "nodemon server.js --trace-warning"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/smit-luvani/express-forster"
+	},
+	"keywords": [
+		"express js",
+		"boilerplate",
+		"node js",
+		"express forster",
+		"template"
+	],
+	"author": "Smit Luvani",
+	"license": "MIT License",
+	"homepage": "https://github.com/smit-luvani/express-forster#readme",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.310.0",
+		"bcryptjs": "^2.4.3",
+		"cookie-parser": "^1.4.5",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"error-stack-parser": "^2.1.4",
+		"express": "^4.17.1",
+		"express-fileupload": "^1.2.0",
+		"firebase-admin": "^12.0.0",
+		"http-status": "^1.4.2",
+		"jsonwebtoken": "^9.0.0",
+		"lodash": "^4.17.21",
+		"mongoose": "^8.0.3",
+		"multer": "^1.4.5-lts.1",
+		"multer-s3": "^3.0.1",
+		"nodemailer": "^6.6.5",
+		"nodemailer-sendgrid": "^1.0.3",
+		"nodemon": "^3.0.2",
+		"razorpay": "^2.0.7",
+		"redis": "^4.6.12",
+		"stripe": "^14.10.0",
+		"unirest": "^0.6.0",
+		"uuid": "^9.0.0",
+		"winston": "^3.3.3"
+	}
 }

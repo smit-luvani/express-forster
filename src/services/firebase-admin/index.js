@@ -4,24 +4,16 @@
  * @module https://www.npmjs.com/package/firebase-admin
  * @tutorial https://www.npmjs.com/package/firebase-admin#documentation
  */
-
-const firebaseAdmin = require('firebase-admin'),
-    logger = require('../winston'),
-    { logging } = require('../../config/default.js')
-
-const serviceAccount = require('../../config/firebase-secret')();
-if (!serviceAccount) {
-    logger.error('Service [Firebase Admin]: SDK or Database URL Missing')
-    process.exit(1);
-}
+const logger = require('../winston');
+const { initializeApp, applicationDefault } = require('firebase-admin/app');
 
 try {
-    firebaseAdmin.initializeApp({
-        credential: firebaseAdmin.credential.cert(serviceAccount.sdk),
-        databaseURL: serviceAccount.databaseURL
-    });
-    logging.firebaseAdmin ? logger.info('Service [Firebase Admin]: SUCCESS') : null;
-} catch {
-    logger.info('Service [Firebase Admin]: Failed. SDK or database URL Invalid')
-    process.exit(1);
+    const app = initializeApp({
+        credential: applicationDefault()
+    })
+
+    logger.info('Service [Firebase Admin]: App Initialized ' + app.name)
+} catch (e) {
+    console.error(e)
+    logger.error('Service [Firebase Admin]: ', e?.stack || e?.message)
 }

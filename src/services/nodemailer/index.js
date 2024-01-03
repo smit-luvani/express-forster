@@ -1,11 +1,15 @@
+/**
+ * @author Smit Luvani
+ * @description SMTP Mailer
+ * @module https://www.npmjs.com/package/nodemailer
+ * @tutorial https://nodemailer.com/about/
+ * @example https://github.com/nodemailer/nodemailer/tree/master/examples
+ */
+
 const nodemailer = require('nodemailer'),
     logger = require('../winston')
 
-if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
-    throw new Error('Service [NODEMAILER]: SMTP Configuration Missing in environment variables')
-}
-
-let transporter = nodemailer.createTransport({
+let transporterDefault = nodemailer.createTransport({
     service: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     secure: true,
@@ -20,32 +24,25 @@ let transporter = nodemailer.createTransport({
 
 /**
  * @author Smit Luvani
- * @description SMTP Mailer
+ * @description Nodemailer transport for SendGrid
  * @module https://www.npmjs.com/package/nodemailer
- * @tutorial https://nodemailer.com/about/
- * @example https://github.com/nodemailer/nodemailer/tree/master/examples
  * 
  * @param {{
- * fromMail: String,
- * toMail: String,
- * subject: String,
- * body: String,
- * senderName: String,
- * attachments: Array
- * }} options
- */
-module.exports = async (options) => {
-    let {
-        fromMail,
-        toMail,
-        subject,
-        body,
-        senderName,
-        attachments = []
-    } = options;
+* fromMail: String,
+* toMail: String,
+* subject: String,
+* body: String,
+* senderName: String,
+* attachments: Array,
+* transporter: nodemailer.Transporter
+* }} options
+* @param {Function} cb
+*/
+module.exports = async (options, cb) => {
+    let { fromMail, toMail, subject, body, senderName, attachments = [], transporter = transporterDefault } = options;
 
     if (!fromMail || !toMail || !subject || !body) {
-        return logger.error('Service [NODEMAILER]: Missing Required Parameter in options. [fromMail, toMail, subject, body]')
+        return logger.error('Service [NODEMAILER]: Missing Required Parameter. fromMail, toMail, subject, body are required.')
     }
 
     try {
@@ -55,10 +52,10 @@ module.exports = async (options) => {
             subject: subject, // Subject line
             html: body, // html body
             attachments: attachments, // attachments
-            sender: senderName,
+            sender: senderName ? senderName + ` <${fromMail}>` : fromMail,
         });
 
-        logging.nodemailer ? logger.info(`Service [NODEMAILER]: Mail Sent Result => ${JSON.stringify(info)}`) : null;
+        logger.verbose(`Service [NODEMAILER]: Mail Sent`);
         return info;
     } catch (error) {
         return logger.error('Service [NODEMAILER]: ', error)

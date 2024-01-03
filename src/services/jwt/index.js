@@ -6,58 +6,57 @@
 
 const jwt = require('jsonwebtoken'),
     logger = require('../winston')
-
+const packageInfo = require('../../../package.json')
 /**
  * 
  * @param {jwt.JwtPayload} object 
  * @param {jwt.SignOptions} options
- * @returns {string | Error}
+ * @returns 
  */
-module.exports.sign = (object, options) => {
-    if (process.env.JWT_SECRET == undefined) {
-        throw new Error('JWT_SECRET is not found in environment variables. This application is using this service.')
-    }
+module.exports.sign = (object, options = {}) => {
+    options.issuer = options?.issuer || packageInfo.name;
+    options.audience = options?.audience || packageInfo.name;
 
     try {
-        const token = jwt.sign(object, process.env.JWT_SECRET, options);
+        const token = object ? jwt.sign(object, process.env.JWT_SECRET, options) : undefined;
 
-        logger.info('Service [JWT]: Token Generated');
+        if (!token) {
+            logger.error('Service [JWT]: String/Object Required to create Sign Token')
+            return false
+        }
+
+        logger.debug('Service [JWT]: Token Generated');
 
         return token;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)
-        return false;
+        throw error
     }
 }
-
 /**
  * 
  * @param {string} token 
- * @returns {jwt.VerifyCallback | boolean}
+ * @param {jwt.VerifyOptions} verifyOption
+ * @returns {jwt.JwtPayload | false}
  */
-module.exports.verify = (token) => {
-    if (process.env.JWT_SECRET == undefined) {
-        throw new Error('JWT_SECRET is not found in environment variables. This application is using this service.')
-    }
-
+module.exports.verify = (token, verifyOption) => {
     try {
-        logger.info((token, jwt.verify(token, process.env.JWT_SECRET)) ? '[JWT]: Token Verified' : '[JWT]: Token Verification Failed')
-        return token ? jwt.verify(token, process.env.JWT_SECRET) : false;
+        if (token) {
+            var verifyToken = jwt.verify(token, process.env.JWT_SECRET)
+            logger.debug('Service [JWT]: Token Verified')
+            return verifyToken
+        }
+
+        throw new Error('Token Required to Verify')
     } catch (error) {
-        logger.error('Service [JWT]: ' + error)
+        logger.verbose('Service [JWT]: Token could not verify. ' + error)
         return false;
     }
 }
 
-/**
- * 
- * @param {string} token 
- * @param {jwt.DecodeOptions} options
- * @returns {jwt.JwtPayload}
- */
-module.exports.decode = (token, options) => {
+module.exports.decode = (token) => {
     try {
-        return token ? jwt.decode(token, options) : false;
+        return token ? jwt.decode(token) : false;
     } catch (error) {
         logger.error('Service [JWT]: ' + error)
         return false;

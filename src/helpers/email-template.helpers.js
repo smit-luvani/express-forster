@@ -1,20 +1,19 @@
+/**
+ * @author Smit Luvani
+ * @description Replace Email Template with Data
+ * @param {String} templateName
+ */
+
 const fs = require('fs')
 const { logger } = require('../services')
-const templateDirectory = process.cwd() + '/src/templates/emails'
+const templateDirectory = process.cwd() + '/src/templates'
 
 const templates = {
     // 'TEMPLATE_NAME': `${templateDirectory}/TEMPLATE_NAME.html`, // Example. You can add more templates here.
 }
 
-/**
- * @author Smit Luvani
- * @description Replace Email Template with Data. This function will replace all the keys in template with data. Please use {{key}} in template to replace with data.
- * @param {String} templateName
- * @param {object} data
- */
-async function generateBody(templateName, data = {}) {
-    logger.info('Helpers > Email Template Helpers')
-
+module.exports = async (templateName, data = {}) => {
+    logger.silly('Helpers > Email Template Helpers')
     if (!templateName || !data || typeof templateName !== 'string' || typeof data !== 'object') {
         throw new Error('templateName is required. templateName must be string and Data must be JSON.');
     }
@@ -41,9 +40,7 @@ async function generateBody(templateName, data = {}) {
         const findKeys = new RegExp(/{{(.*?)}}/, 'g'); // Starts with {{ and ends with }}
         var missingKeys = findKeys.exec(fileContent);
 
-        if (!missingKeys) {
-            return fileContent;
-        }
+        if (!missingKeys) { return fileContent; }
 
         var missingKeysArray = new Set();
         while (missingKeys !== null) {
@@ -57,6 +54,4 @@ async function generateBody(templateName, data = {}) {
     }
 }
 
-generateBody.templates = templates;
-
-module.exports = generateBody;
+module.exports.templates = templates;

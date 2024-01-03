@@ -40,7 +40,7 @@ const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date()
 const option = {
     transports: [
         new winston.transports.Console({
-            level: winston_logger.level,
+            level: process.env.LOG_LEVEL || winston_logger.level,
             json: true,
             prettyPrint: true,
             format: logFormat

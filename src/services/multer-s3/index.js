@@ -5,15 +5,16 @@
  * @module https://www.npmjs.com/package/multer
  */
 
-const S3Client = require('../aws').S3Client,
+const S3 = require('../aws-sdk').S3Client,
     multer = require('multer'),
     multerS3 = require('multer-s3'),
     { awsSDK: awsSDKConfig, multer: multerConfig } = require('../../config/default.js'),
+    logger = require('../winston'),
     { v4: uuidv4 } = require('uuid')
 
 // S3 Storage
 const storageS3 = multerS3({
-    s3: S3Client,
+    s3: S3,
     bucket: awsSDKConfig.bucketName,
     contentType: multerS3.AUTO_CONTENT_TYPE,
     acl: awsSDKConfig.acl,
@@ -25,11 +26,13 @@ const storageS3 = multerS3({
 
         const body = JSON.parse(JSON.stringify(req.body));
 
+        let fileName = String(body?.file_name || req?.params?.file_name || file?.originalname) + '.' + file?.mimetype?.split('/')[1];
+
         // Directory & File Name
         let directory = directoryAllocation(req.params.directory || body.directory);
 
         // -- Append original filename to upload file name
-        let originalFilename = String(file.originalname).substring(0, String(file.originalname).lastIndexOf('.'))
+        let originalFilename = String(fileName).substring(0, String(fileName).lastIndexOf('.'))
         originalFilename = originalFilename.replace(/\s/g, '-'); // Replace All Spaces with -
         originalFilename = originalFilename.replace(/[^a-zA-Z0-9-_]/g, ''); // Remove All Special Characters
         originalFilename = originalFilename.replace(/\-{2,}/g, '-'); // Replace Multiple - with single -
@@ -56,7 +59,7 @@ const fileFilter = (req, file, cb) => {
 const directoryAllocation = (directory) => {
     const environment = process.env.NODE_ENV;
     let storageDirectory = environment;
-    storageDirectory += `/${awsSDKConfig.directory[directory] || 'files'}`;
+    storageDirectory += `/${awsSDKConfig.directory[directory] || awsSDKConfig.directory.files}`;
     return storageDirectory;
 }
 

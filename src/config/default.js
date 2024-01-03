@@ -3,9 +3,7 @@ module.exports = {
         "level": "debug"
     },
     "logging": {
-        "firebaseAdmin": true,
         "razorpay": false,
-        "multerS3": true
     },
     "bcryptjs": {
         "salt": 6

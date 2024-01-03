@@ -1,6 +1,7 @@
 const { Error } = require("mongoose");
 const httpStatus = require("http-status");
 const { logger } = require("../services");
+const promiseHelper = require("./promise-return.helpers");
 
 /**
  * @author Smit Luvani
@@ -12,11 +13,13 @@ const { logger } = require("../services");
  * httpStatus: number,
  * message: string,
  * duplicateKey?: string,
- * _json?: object
- * }}
+ * stack: string,
+ * _parser: string,
+ * _json?: any,
+ * promiseHelperResponse: () => import('./promise-return.helpers').PromiseReturn}}
  */
 module.exports = (error) => {
-    logger.info("Helpers > MongoDB Error Parser")
+    logger.silly("Helpers > MongoDB Error Parser")
     if (!error instanceof Error) {
         return error;
     }
@@ -47,6 +50,8 @@ module.exports = (error) => {
             returnObject.message = `${error.path} is invalid.` + ` ${error.value} is not a valid ${error.kind}. `;
             break;
     }
+
+    returnObject.promiseHelperResponse = () => promiseHelper(returnObject.httpStatus, returnObject.message, returnObject);
 
     return returnObject;
 };
