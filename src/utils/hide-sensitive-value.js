@@ -1,4 +1,4 @@
-const sensitiveKey = require('../config/default').sensitiveKey
+const sensitiveKeys = ["password", "token", "authorization", "auth", "access_token", "user-agent"]
 
 /**
  * @author Smit Luvani
@@ -9,37 +9,48 @@ const sensitiveKey = require('../config/default').sensitiveKey
  * @param {{
  * replaceWith: string, 
  * mutation: boolean,
+ * keys: string[]
  * }} options
  * @callback cb Callback function
  * @returns {object} Sanitized Object
  */
 function hideSensitiveValue(object, removeSensitiveKey = false, options, cb) {
-    if (!options) options = { replaceWith: '***', mutation: false }
+    if (!options) options = { replaceWith: '***', mutation: false, keys: sensitiveKeys };
 
-    if (cb && typeof cb !== 'function') throw new Error('[hideSensitiveValue]: Callback function is not a function')
+    if (cb && typeof cb !== 'function') {
+        throw new Error('[hideSensitiveValue]: Callback function is not a function');
+    }
+
+    if (!Array.isArray(options.keys)) throw new Error('[hideSensitiveValue]: sensitiveKeys must be an array');
+    if (options.keys.length === 0) throw new Error('[hideSensitiveValue]: sensitiveKeys must have at least one key');
 
     try {
-        if (typeof object === 'object') {
+        const stack = [{ obj: object, parent: null, key: null }];
+        const result = options.mutation === false ? JSON.parse(JSON.stringify(object)) : object;
 
-            if (options.mutation == false) object = JSON.parse(JSON.stringify(object)) // Clone Object
+        while (stack.length > 0) {
+            const { obj, } = stack.pop();
 
-            for (let key in object) {
-                if (typeof object[key] === 'object') {
-                    object[key] = hideSensitiveValue(object[key], removeSensitiveKey, options)
-                } else if (sensitiveKey.includes(key)) {
-                    if (removeSensitiveKey) {
-                        delete object[key]
-                    } else {
-                        object[key] = options?.replaceWith || '***'
+            for (let prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    if (typeof obj[prop] === 'object' && !options.keys.includes(prop)) {
+                        stack.push({ obj: obj[prop] });
+                        obj[prop] = hideSensitiveValue(obj[prop], removeSensitiveKey, options);
+                    } else if (options.keys.includes(prop)) {
+                        if (removeSensitiveKey) {
+                            delete result[prop];
+                        } else {
+                            result[prop] = options.replaceWith || '***';
+                        }
                     }
                 }
             }
         }
 
-        return cb ? cb(object) : object;
+        return cb ? cb(result) : result;
 
     } catch (error) {
-        throw cb ? cb(null, error) : error
+        throw cb ? cb(null, error) : error;
     }
 }
 
