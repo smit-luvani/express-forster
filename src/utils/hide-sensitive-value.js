@@ -21,6 +21,7 @@ function hideSensitiveValue(object, removeSensitiveKey = false, options, cb) {
         throw new Error('[hideSensitiveValue]: Callback function is not a function');
     }
 
+    if (!options.keys) options.keys = sensitiveKeys;
     if (!Array.isArray(options.keys)) throw new Error('[hideSensitiveValue]: sensitiveKeys must be an array');
     if (options.keys.length === 0) throw new Error('[hideSensitiveValue]: sensitiveKeys must have at least one key');
 
