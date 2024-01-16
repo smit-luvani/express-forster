@@ -15,24 +15,49 @@
  * @returns {winston.createLogger}
  */
 
-// Winston Service
-// Console Logger for Development Environment
-
-const winston = require('winston'),
-    { winston: winston_logger } = require('../../config/default.js')
+const winston = require('winston');
 const hideSensitiveValue = require('../../utils/hide-sensitive-value')
-const { IncomingMessage } = require('http')
 
-const { combine, timestamp, printf, json } = winston.format;
+var logLevel;
+if (process.env.LOG_LEVEL) {
+    logLevel = process.env.LOG_LEVEL
+} else {
+    switch (process.env.NODE_ENV) {
+        case 'development':
+            logLevel = 'silly'
+            break;
+        case 'beta':
+            logLevel = 'debug'
+            break;
+        default:
+            logLevel = 'warn'
+            break;
+    }
+}
+
+const { combine, timestamp, printf, json, errors, colorize, metadata } = winston.format;
 
 const logFormat = combine(
+    errors({ stack: true }),
+    json(),
+    colorize(),
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
+    printf(({ level, message, timestamp, requestId }) => {
+        const ReqId = `[${requestId}]` || '';
+        if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message))
+
+        return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
+    }))
+
+const fileLogFormat = combine(
+    errors({ stack: true }),
     json(),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
-    printf(({ level, message, timestamp }) => {
-        if (typeof message === 'object') message = hideSensitiveValue(message)
-        typeof message === 'object' ? message = JSON.stringify(message) : null;
-        const ReqId = IncomingMessage.prototype?.requestId;
-        return `${timestamp}${ReqId ? ' [' + ReqId + ']' : ''} [${level}]: ${String(message)}`;
+    printf(({ level, message, timestamp, requestId }) => {
+        const ReqId = `[${requestId}]` || '';
+        if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message))
+
+        return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
     }))
 
 const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
@@ -40,21 +65,18 @@ const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date()
 const option = {
     transports: [
         new winston.transports.Console({
-            level: process.env.LOG_LEVEL || winston_logger.level,
-            json: true,
-            prettyPrint: true,
+            level: logLevel,
             format: logFormat
         }),
         new winston.transports.File({
-            format: logFormat,
+            level: logLevel,
+            format: fileLogFormat,
             filename: process.cwd() + `/.logs/${process.env.NODE_ENV || 'no-environment'}/stdout-${today}.log`,
-            json: true
         }),
         new winston.transports.File({
-            format: logFormat,
+            level: 'error',
+            format: fileLogFormat,
             filename: process.cwd() + `/.logs/${process.env.NODE_ENV || 'no-environment'}/error-${today}.log`,
-            json: true,
-            level: 'error'
         })
     ]
 }

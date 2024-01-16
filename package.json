@@ -1,6 +1,6 @@
 {
 	"name": "express-forster",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Quick start Express JS based boilerplate template for your next project.",
 	"main": "server.js",
 	"scripts": {
