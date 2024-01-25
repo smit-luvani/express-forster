@@ -1,6 +1,6 @@
 {
 	"name": "express-forster",
-	"version": "2.1.2",
+	"version": "2.2.0",
 	"description": "Quick start Express JS based boilerplate template for your next project.",
 	"main": "server.js",
 	"scripts": {
@@ -25,6 +25,7 @@
 		"bcryptjs": "^2.4.3",
 		"cookie-parser": "^1.4.5",
 		"cors": "^2.8.5",
+		"dayjs": "^1.11.10",
 		"dotenv": "^16.0.3",
 		"error-stack-parser": "^2.1.4",
 		"express": "^4.17.1",
