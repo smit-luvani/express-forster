@@ -72,6 +72,7 @@ module.exports = (res, status, message, data, customCode, metadata, { sort = tru
         }
     } catch (error) {
         console.error(error)
+        res.logger?.clear();
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: httpStatus.INTERNAL_SERVER_ERROR, error: error.stack });
     }
 
@@ -112,6 +113,7 @@ module.exports = (res, status, message, data, customCode, metadata, { sort = tru
 
         if (process.env.NODE_ENV !== 'production') jsonResponse.error = data instanceof Error == true ? data?.stack : undefined
     } catch (error) {
+        res.logger?.clear();
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.stack })
     }
 
@@ -139,5 +141,7 @@ Process Time: ${responseTime}ms | Status: ${jsonResponse.status} | Response: ${j
         return res.status(parseInt(status)).json(jsonResponse)
     } catch (error) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message, error: error.stack })
+    } finally {
+        res.logger?.clear();
     }
 }

@@ -23,19 +23,13 @@ app.use((req, res, next) => {
     // Attach Logger to Request and Response Object
     const time = new Date(), requestId = `REQ-${randomDigit()}`;
 
-    const childLogger = logger.child({
-        requestId: requestId,
-        requestTime: time,
-    })
+    const reqLogger = logger.__instance({ level: 'info', defaultMeta: { requestId: requestId, requestTime: time } })
 
-    req.requestId = requestId;
-    req.requestTime = time;
-    req.logger = childLogger;
+    req.requestId = res.requestId = requestId;
+    req.requestTime = res.requestTime = new Date();
+    req.logger = res.logger = reqLogger;
 
-    res.requestId = requestId;
-    res.requestTime = time;
-    res.logger = childLogger;
-    next()
+    return next()
 })
 
 // Body Parser
@@ -66,9 +60,7 @@ app.use((req, res, next) => {
     try {
         // Log Incoming Request
         if (ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path)) {
-            logger.silent = true;
-        } else {
-            logger.silent = false;
+            req.logger.silent = res.logger.silent = true;
         }
 
         var headers = hideSensitiveValue(req.headers),

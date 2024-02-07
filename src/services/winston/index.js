@@ -43,7 +43,7 @@ const logFormat = combine(
     colorize(),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
     printf(({ level, message, timestamp, requestId }) => {
-        const ReqId = `[${requestId}]` || '';
+        const ReqId = requestId ? `[${requestId}]` : '';
         if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message))
 
         return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
@@ -54,7 +54,7 @@ const fileLogFormat = combine(
     json(),
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
     printf(({ level, message, timestamp, requestId }) => {
-        const ReqId = `[${requestId}]` || '';
+        const ReqId = requestId ? `[${requestId}]` : '';
         if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message))
 
         return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
@@ -82,3 +82,8 @@ const option = {
 }
 
 module.exports = winston.createLogger(option)
+
+/**
+ * @param {import('winston').LoggerOptions} options - Winston Logger Options
+ */
+module.exports.__instance = (options) => winston.createLogger({ ...option, options })
