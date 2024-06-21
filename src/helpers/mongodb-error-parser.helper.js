@@ -1,6 +1,6 @@
 const { Error } = require("mongoose");
 const httpStatus = require("http-status");
-const { logger } = require("../services");
+const logger = require("../services/winston");
 const promiseHelper = require("./promise-return.helpers");
 
 /**

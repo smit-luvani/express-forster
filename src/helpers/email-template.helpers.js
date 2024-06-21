@@ -5,7 +5,7 @@
  */
 
 const fs = require('fs')
-const { logger } = require('../services')
+const logger = require("../services/winston");
 const templateDirectory = process.cwd() + '/src/templates'
 
 const templates = {
