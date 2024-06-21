@@ -2,6 +2,7 @@ console.clear() // Comment this for Continuos logging
 
 // Load Environment Variables from the .env file
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV || 'development'}`, override: true })
+require('dotenv').config({ path: `./.env.local`, override: true })
 
 if (!process.env.NODE_ENV || !process.env.PORT) throw new Error('NODE_ENV or PORT not found in .env file. Please configure .env file. See README.md')
 

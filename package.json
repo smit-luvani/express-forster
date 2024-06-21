@@ -4,7 +4,7 @@
 	"description": "Quick start Express JS based boilerplate template for your next project.",
 	"main": "server.js",
 	"scripts": {
-		"start": "nodemon server.js --trace-warning"
+		"start": "nodemon --trace-warnings server.js"
 	},
 	"repository": {
 		"type": "git",
