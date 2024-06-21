@@ -10,6 +10,8 @@ module.exports.timeUtil = require('./time-validation')
 module.exports.replaceAll = require('./replaceAll')
 module.exports.hideSensitiveValue = require('./hide-sensitive-value')
 module.exports.sortObject = require('./sort-json-alphabetically') // This function bind JSON object prototype to sort JSON alphabetically
+module.exports.versionParser = require('./version-parser')
+module.exports.getLoggerInstance = require('./find-parent-logger')
 
 /**
  * 
