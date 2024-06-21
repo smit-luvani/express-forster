@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     // Attach Logger to Request and Response Object
     const time = new Date(), requestId = `REQ-${randomDigit()}`;
 
-    const reqLogger = logger.__instance({ level: 'info', defaultMeta: { requestId: requestId, requestTime: time } })
+    const reqLogger = logger.__instance({ defaultMeta: { requestId: requestId, requestTime: time } })
 
     req.requestId = res.requestId = requestId;
     req.requestTime = res.requestTime = new Date();
