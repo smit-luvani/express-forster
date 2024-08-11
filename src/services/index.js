@@ -19,6 +19,5 @@ module.exports.DayJS = require('./dayjs')
 // module.exports.razorpay = require('./razorpay')
 // module.exports.aws = require('./aws-sdk')
 // module.exports.nodemailer = require('./nodemailer')
-// module.exports.nodemailerSendGrid = require('./nodemailer/sendgrid')
 // module.exports.redis = require('./redis')
 // module.exports.StripeTestingAccount = StripeService.Stripe(StripeService.StripeConstants.StripeAccount.testingAccount);
