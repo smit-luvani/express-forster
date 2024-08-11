@@ -32,3 +32,6 @@ It is assumed that you are familiar with the Express JS.
 
 ## Services
 There are some pre-configured services (`/src/services`) in this template. You can use them as per your requirement. You might need to set the environment variable and configuration for the services. For that, you can refer to the environment file (`.env.example`) and the `/src/config`.
+
+## TODOs
+[ ] Enhance logger to manage logging for individual requests using request IDs.
