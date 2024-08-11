@@ -2,7 +2,7 @@
  * @author Smit Luvani
  * @description Export utils
  */
-
+const Axios = require('axios').default
 module.exports.arrayItemInArrayUtil = require('./array-item-in-array')
 module.exports.randomGenerateUtil = require('./random')
 module.exports.regexValidateUtil = require('./regex')
@@ -18,11 +18,5 @@ module.exports.getLoggerInstance = require('./find-parent-logger')
  * @param {string} email 
  */
 module.exports.checkDisposableEmail = (email) => new Promise((resolve, reject) => {
-    require('unirest').get('https://open.kickbox.com/v1/disposable/' + email).end((response) => {
-        if (response.error) {
-            return reject(response.error)
-        }
-
-        return resolve(response.body)
-    })
+    Axios.get('https://open.kickbox.com/v1/disposable/' + email).then((response) => resolve(response.data?.disposable)).catch(reject)
 })
