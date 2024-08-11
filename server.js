@@ -1,5 +1,17 @@
 console.clear() // Comment this for Continuos logging
 
+process.on('exit', (code) => {
+    console.log('[event:exit]', code);
+})
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[event:unhandledRejection]', reason)
+})
+
+process.on('uncaughtException', (error) => {
+    console.error('[event:uncaughtException]', error)
+})
+
 // Load Environment Variables from the .env file
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV || 'development'}`, override: true })
 require('dotenv').config({ path: `./.env.local`, override: true })

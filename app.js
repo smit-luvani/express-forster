@@ -8,9 +8,8 @@ const express = require('express'),
     { randomDigit } = require('./src/utils/random')
 const { ignoreLogPaths, healthCheckPaths } = require('./src/config/default');
 const { hideSensitiveValue } = require('./src/utils');
-
-process.on('uncaughtException', (error) => logger.error(error?.stack || error?.message || error));
-process.on('unhandledrejection', (error) => logger.error(error?.stack || error?.message || error));
+const DayJS = require('./src/services/dayjs');
+const serverUpTime = new Date();
 
 app.set('trust proxy', true)
 app.set('x-powered-by', false)
@@ -91,14 +90,20 @@ Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} 
 })
 
 // App Health Check
-app.get(healthCheckPaths, (req, res) => response(res, httpStatus.OK, 'Health: OK', {
-    env: process.env.NODE_ENV,
-    message: 'Health: OK',
-    app: packageInfo.name,
-    version: packageInfo.version,
-    author: packageInfo.author,
-    homepage: packageInfo.homepage,
-}))
+app.get(['/', '/health'], (req, res) => {
+    return response(res, httpStatus.OK, 'Health: OK', {
+        app: packageInfo.name,
+        version: packageInfo.version,
+        environment: process.env.NODE_ENV,
+        author: packageInfo.author,
+        contributors: packageInfo.contributors,
+        time_info: {
+            timezone: DayJS.tz.guess(),
+            server_uptime: { Date: serverUpTime, locale_string: DayJS(serverUpTime).format('LLLL'), uptime_info: DayJS(serverUpTime).fromNow(), uptime_seconds: parseInt((new Date() - serverUpTime) / 1000) },
+            server_time: { Date: new Date(), locale_string: DayJS().format('LLLL') },
+        },
+    });
+});
 
 const routes = require('./src/routes');
 app.use(routes);
