@@ -6,7 +6,7 @@ const express = require('express'),
     packageInfo = require('./package.json'),
     response = require('./src/helpers/response.helpers'),
     { randomDigit } = require('./src/utils/random')
-const { ignoreLogPaths, healthCheckPaths } = require('./src/config/default');
+const { healthCheckPaths } = require('./src/config/default');
 const { hideSensitiveValue } = require('./src/utils');
 const DayJS = require('./src/services/dayjs');
 const serverUpTime = new Date();
@@ -20,13 +20,10 @@ app.use(require('cors')())
 // Set Request ID and Time
 app.use((req, res, next) => {
     // Attach Logger to Request and Response Object
-    const time = new Date(), requestId = `REQ-${randomDigit()}`;
-
-    const reqLogger = logger.__instance({ defaultMeta: { requestId: requestId, requestTime: time } })
+    const requestId = `REQ-${randomDigit()}`;
 
     req.requestId = res.requestId = requestId;
     req.requestTime = res.requestTime = new Date();
-    req.logger = res.logger = reqLogger;
 
     return next()
 })
@@ -57,11 +54,6 @@ app.use((req, res, next) => {
     }
 
     try {
-        // Log Incoming Request
-        if (ignoreLogPaths.includes(req.path) || healthCheckPaths.includes(req.path)) {
-            req.logger.silent = res.logger.silent = true;
-        }
-
         var headers = hideSensitiveValue(req.headers),
             body = req.body ? hideSensitiveValue(req.body) : {},
             query = hideSensitiveValue(req.query),
@@ -78,7 +70,7 @@ app.use((req, res, next) => {
 
         if (bodyLog.length > 1000) bodyLog = `\nBody: Body too long to log. [${bodyLog.length} characters]`
 
-        req.logger.info(`======================= REQUEST ============================= 
+        logger.info(`======================= REQUEST ============================= 
 IP: ${(headers['x-forwarded-for'] || req.socket.remoteAddress).split(",")[0]}
 Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} ${bodyLog}
 ==============================================================`)
@@ -90,7 +82,7 @@ Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} 
 })
 
 // App Health Check
-app.get(['/', '/health'], (req, res) => {
+app.get(healthCheckPaths, (req, res) => {
     return response(res, httpStatus.OK, 'Health: OK', {
         app: packageInfo.name,
         version: packageInfo.version,

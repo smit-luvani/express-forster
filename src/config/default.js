@@ -37,9 +37,5 @@ module.exports = {
         "/",
         "/health",
         '/_ah/start',
-    ],
-    ignoreLogPaths: [
-        '/favicon.ico',
-        '/images/icons/gear.png'
     ]
 }
