@@ -1,3 +1,6 @@
 // You can add common or constant here
-
-module.exports.common_environment = ['development', 'production']
+const environments = {
+    development: 'development',
+    production: 'production'
+}
+module.exports.environments = environments;

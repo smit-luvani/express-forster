@@ -1,9 +1,10 @@
 /**
  * @author Smit Luvani
  * @description Handles Stripe Errors
- * @param {Object} err - Error Object from Stripe Response
+ * - You can handle stripe errors and return a custom response
+ * @param {Stripe} err - Error Object from Stripe Response
+ * @see https://docs.stripe.com/error-handling?lang=node
  */
-
 module.exports = (error) => {
     let errorResponseInterface = {
         error_type: error.type,
@@ -24,6 +25,8 @@ module.exports = (error) => {
             break;
         case 'StripeInvalidRequestError':
             // Invalid parameters were supplied to Stripe's API
+            errorResponseInterface.error_type = error.type;
+            errorResponseInterface.message = error.message;
             break;
         case 'StripeAPIError':
             // An error occurred internally with Stripe's API

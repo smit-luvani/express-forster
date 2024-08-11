@@ -6,6 +6,6 @@
 
 module.exports = {
     Stripe: require('./stripe'),
-    StripeErrorHandler: require('./stripe-error-handler'),
-    StripeHelpers: require('./helpers')
+    StripeHelpers: require('./helpers'),
+    StripeConstants: require('./constants')
 };
