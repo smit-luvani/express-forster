@@ -1,5 +1,5 @@
 // Export All Controller
 
-const razorpayController = require('./razorpay')
+const fileUploadController = require('./file-upload')
 
-module.exports = { razorpayController }
+module.exports = { fileUploadController }
