@@ -1,15 +1,15 @@
 // App Entry Point
 const express = require('express'),
     app = express(),
-    httpStatus = require('http-status'),
+    { httpStatus } = require('./src/services'),
     logger = require('./src/services/winston'),
     packageInfo = require('./package.json'),
     response = require('./src/helpers/response.helpers'),
     { randomDigit } = require('./src/utils/random')
 const { healthCheckPaths } = require('./src/config/default');
-const { hideSensitiveValue } = require('./src/utils');
+const { hideSensitiveValue, getLoggerInstance } = require('./src/utils');
 const DayJS = require('./src/services/dayjs');
-const serverUpTime = new Date();
+const serverUpTime = DayJS().toDate();
 
 app.set('trust proxy', true)
 app.set('x-powered-by', false)
@@ -23,7 +23,8 @@ app.use((req, res, next) => {
     const requestId = `REQ-${randomDigit()}`;
 
     req.requestId = res.requestId = requestId;
-    req.requestTime = res.requestTime = new Date();
+    req.requestTime = res.requestTime = DayJS().toDate();
+    req.logger = res.logger = logger.__instance({ defaultMeta: { requestId: requestId, requestTime: req.requestTime } });
 
     return next()
 })
@@ -31,11 +32,16 @@ app.use((req, res, next) => {
 // Body Parser
 app.use('/stripe/webhook', express.raw({ type: 'application/json' })); // To keep body raw for Stripe Webhook
 
-app.use(express.urlencoded({ extended: true }), express.json(), (error, _, res, next) => {
+app.use(express.urlencoded({ extended: true }), express.json(), function (error, _, res, next) {
+    const logger = getLoggerInstance(...arguments);
+
     if (error instanceof SyntaxError) {
+        logger.error('SyntaxError: Invalid Body', error)
         return response(res, httpStatus.BAD_REQUEST, 'SyntaxError: Invalid Body')
     }
+
     if (error instanceof ReferenceError) {
+        logger.error('ReferenceError: Invalid Reference. [REPORT TO DEVELOPER]', error)
         return response(res, httpStatus.BAD_REQUEST, 'ReferenceError: Invalid Reference. [REPORT TO DEVELOPER]')
     }
 
@@ -45,7 +51,8 @@ app.use(express.urlencoded({ extended: true }), express.json(), (error, _, res, 
 // Cookie Parser
 app.use(require('cookie-parser')())
 
-app.use((req, res, next) => {
+app.use(function (req, res, next) {
+    const logger = getLoggerInstance(...arguments);
     // URI Error Handling
     try {
         decodeURIComponent(req.path);
@@ -82,7 +89,10 @@ Path: ${req.path} | Method: ${req.method} ${headerLog} ${cookieLog} ${queryLog} 
 })
 
 // App Health Check
-app.get(healthCheckPaths, (req, res) => {
+app.get(healthCheckPaths, function (req, res) {
+    const logger = getLoggerInstance(...arguments);
+    logger.info('Health Check: OK');
+
     return response(res, httpStatus.OK, 'Health: OK', {
         app: packageInfo.name,
         version: packageInfo.version,
@@ -91,8 +101,13 @@ app.get(healthCheckPaths, (req, res) => {
         contributors: packageInfo.contributors,
         time_info: {
             timezone: DayJS.tz.guess(),
-            server_uptime: { Date: serverUpTime, locale_string: DayJS(serverUpTime).format('LLLL'), uptime_info: DayJS(serverUpTime).fromNow(), uptime_seconds: parseInt((new Date() - serverUpTime) / 1000) },
-            server_time: { Date: new Date(), locale_string: DayJS().format('LLLL') },
+            server_uptime: {
+                Date: serverUpTime,
+                locale_string: DayJS(serverUpTime).format('LLLL'),
+                uptime_info: DayJS(serverUpTime).fromNow(),
+                uptime_seconds: DayJS().diff(serverUpTime, 'seconds', true)
+            },
+            server_time: { Date: DayJS().toDate(), locale_string: DayJS().format('LLLL') },
         },
     });
 });

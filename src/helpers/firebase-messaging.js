@@ -1,4 +1,4 @@
-const FCM = require('firebase-admin/messaging');
+const { getMessaging } = require('firebase-admin/messaging');
 const logger = require('../services/winston');
 
 /**
@@ -8,20 +8,24 @@ const logger = require('../services/winston');
  * @param {NotificationObject|[NotificationObject]} data - Data to send in notification
  * @param {Function} cb - Callback function
  */
-const send = (data, cb = () => { }) => new Promise((resolve, reject) => {
-    if (!data) return cb('Data is required', null);
+const send = (data, cb = () => { }) =>
+    new Promise((resolve, reject) => {
+        if (!data) return cb('Data is required', null);
 
-    if (!Array.isArray(data)) data = [data];
+        if (!Array.isArray(data)) data = [data];
 
-    FCM.getMessaging().sendEach(data).then(result => {
-        cb(null, result)
-        resolve(result);
-    }).catch(error => {
-        logger.error(error);
-        cb(error, null);
-        reject(error);
+        getMessaging(FirebaseAdmin.app('fgiit-app'))
+            .sendEach(data)
+            .then((result) => {
+                cb(null, result);
+                resolve(result);
+            })
+            .catch((error) => {
+                logger.error(`[firebase-messaging.js]: ${error.message}`);
+                cb(error, null);
+                reject(error);
+            });
     });
-})
 
 // TODO: Send Multicast Message
 

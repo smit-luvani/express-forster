@@ -1,5 +1,4 @@
 const Stripe = require('stripe');
-const { getENV } = require('../../helpers')
 const logger = require('../winston')
 const { StripeAccount } = require('./constants');
 const { default: TypeStripe } = require('stripe');
@@ -10,7 +9,7 @@ const StripeENVKey = {
     [StripeAccount.testingAccount]: {
         stripePublishableKey: `STRIPE_TESTING_AC_PUBLISHABLE_KEY`,
         secret: 'STRIPE_TESTING_AC_SECRET_KEY',
-        webhook_secret: getEnv('STRIPE_LOCAL_ENDPOINT_SECRET') || 'STRIPE_TESTING_AC_WEBHOOK_SECRET'
+        webhook_secret: getEnv('STRIPE_TESTING_AC_WEBHOOK_SECRET')
     },
 }
 
@@ -20,7 +19,7 @@ try {
      * @param {('Testing Account')} account Stripe Account
      * @returns {TypeStripe} Stripe Object
     */
-    module.exports = (account) => Stripe(getENV(StripeENVKey[account].secret), { apiVersion: '2024-06-20' });
+    module.exports = (account) => Stripe(getEnv(StripeENVKey[account].secret), { apiVersion: '2024-06-20' });
 } catch (error) {
     logger.error('Service [Stripe]:', error);
 }

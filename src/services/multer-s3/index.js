@@ -9,7 +9,6 @@ const S3 = require('../aws-sdk').S3Client,
     multer = require('multer'),
     multerS3 = require('multer-s3'),
     { awsSDK: awsSDKConfig, multer: multerConfig } = require('../../config/default.js'),
-    logger = require('../winston'),
     { v4: uuidv4 } = require('uuid')
 
 // S3 Storage

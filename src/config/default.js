@@ -1,18 +1,9 @@
 module.exports = {
-    "winston": {
-        "level": "debug"
-    },
-    "logging": {
-        "razorpay": false,
-    },
-    "bcryptjs": {
-        "salt": 6
-    },
     "cors": {
         "whitelist": ["http://www.example.com"]
     },
     "awsSDK": {
-        "region": "",
+        "region": "us-east-1",
         "bucketName": "",
         "directory": {
             "example": "example_directory"

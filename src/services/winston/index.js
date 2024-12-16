@@ -11,36 +11,34 @@
  *  - silly: 6
  * @module https://www.npmjs.com/package/winston
  * @tutorial https://github.com/winstonjs/winston
- */
-
-/**
- * @typedef {import('winston').Logger} TypeWinstonLogger
+ * @returns {winston.createLogger}
  */
 
 const winston = require('winston');
-const util = require('util')
+const util = require('util');
 const hideSensitiveValue = require('../../utils/hide-sensitive-value');
-const path = require('path');
+const process = require('process');
+const NODE_ENV = process.env.NODE_ENV;
+const DayJS = require('../dayjs');
 
 var logLevel;
 if (process.env.LOG_LEVEL) {
-    logLevel = process.env.LOG_LEVEL
+    logLevel = process.env.LOG_LEVEL;
 } else {
-    switch (process.env.NODE_ENV) {
+    switch (NODE_ENV) {
         case 'development':
-            logLevel = 'silly'
+            logLevel = 'silly';
             break;
         case 'beta':
-            logLevel = 'debug'
+            logLevel = 'debug';
             break;
         default:
-            logLevel = 'warn'
+            logLevel = 'warn';
             break;
     }
 }
 
-const logDir = path.join(process.cwd(), '.logs', process.env.NODE_ENV || 'no-environment');
-const { combine, timestamp, printf, json, errors, colorize, metadata } = winston.format;
+const { combine, timestamp, printf, json, errors, colorize } = winston.format;
 
 const logFormat = combine(
     errors({ stack: true }),
@@ -52,57 +50,134 @@ const logFormat = combine(
         if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message));
 
         return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
-    }))
+    })
+);
 
-const today = `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
+const fileLogFormat = combine(
+    errors({ stack: true }),
+    json(),
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss Z' }),
+    printf(({ level, message, timestamp, requestId }) => {
+        const ReqId = requestId ? `[${requestId}]` : '';
+        if (typeof message === 'object') message = JSON.stringify(hideSensitiveValue(message));
 
-// Define transport options
-const transportOptions = {
-    console: {
-        level: logLevel,
-        format: logFormat
-    },
-    file: {
-        level: logLevel,
-        format: logFormat,
-        filename: path.join(logDir, `stdout-${today}.log`)
-    },
-    errorFile: {
-        level: 'error',
-        format: logFormat,
-        filename: path.join(logDir, `error-${today}.log`)
-    },
-    exceptions: {
-        format: logFormat,
-        filename: path.join(logDir, `exceptions-${today}.log`)
-    },
-    rejections: {
-        format: logFormat,
-        filename: path.join(logDir, `rejections-${today}.log`)
-    }
-};
+        return `[${timestamp}][${level}]${ReqId}: ${String(message)}`;
+    })
+);
 
-const Logger = winston.createLogger({
-    level: logLevel,
-    format: logFormat,
+const today = DayJS().format('DD-MM-YYYY');
+
+/** @type {import('winston').LoggerOptions} */
+const option = (level = logLevel) => ({
     transports: [
-        new winston.transports.Console(transportOptions.console),
-        new winston.transports.File(transportOptions.file),
-        new winston.transports.File(transportOptions.errorFile)
+        new winston.transports.Console({
+            level: level,
+            format: logFormat,
+        }),
+        new winston.transports.File({
+            level: level,
+            format: fileLogFormat,
+            filename: process.cwd() + `/.logs/${NODE_ENV || 'no-environment'}/stdout-${today}.log`,
+        }),
+        new winston.transports.File({
+            level: 'error',
+            format: fileLogFormat,
+            filename: process.cwd() + `/.logs/${NODE_ENV || 'no-environment'}/error-${today}.log`,
+        }),
     ],
-    exceptionHandlers: [
-        new winston.transports.File(transportOptions.exceptions)
-    ],
-    rejectionHandlers: [
-        new winston.transports.File(transportOptions.rejections)
-    ],
+
     handleExceptions: true,
-    handleRejections: true
+    exceptionHandlers: [
+        new winston.transports.File({
+            filename: process.cwd() + `/.logs/${NODE_ENV || 'no-environment'}/exceptions-${today}.log`,
+        }),
+    ],
+
+    handleRejections: true,
+    rejectionHandlers: [
+        new winston.transports.File({
+            filename: process.cwd() + `/.logs/${NODE_ENV || 'no-environment'}/rejections-${today}.log`,
+        }),
+    ],
 });
 
 function argumentsToString(v) {
-    return Array.from(v).map(arg => typeof arg === 'object' ? util.inspect(arg, { depth: null, colors: true }) : arg).join(' ');
+    var args = Array.prototype.slice.call(v);
+    for (var k in args) {
+        if (typeof args[k] === 'object') {
+            // args[k] = JSON.stringify(args[k]);
+            args[k] = util.inspect(args[k], false, null, true);
+        }
+    }
+    var str = args.join(' ');
+    return str;
 }
-['info', 'error', 'warn', 'debug', 'verbose', 'silly'].forEach(level => Logger[level] = (...args) => Logger.log(level, argumentsToString(args)));
 
-module.exports = Logger;
+/**
+ * @type {import('winston').Logger & { __instance: (overWrite: import('winston').LoggerOptions) => import('winston').Logger }}
+ */
+const DefaultLogger = winston.createLogger(option());
+
+DefaultLogger.info = function () {
+    DefaultLogger.log('info', argumentsToString(arguments));
+};
+
+DefaultLogger.error = function () {
+    DefaultLogger.log('error', argumentsToString(arguments));
+};
+
+DefaultLogger.warn = function () {
+    DefaultLogger.log('warn', argumentsToString(arguments));
+};
+
+DefaultLogger.debug = function () {
+    DefaultLogger.log('debug', argumentsToString(arguments));
+};
+
+DefaultLogger.verbose = function () {
+    DefaultLogger.log('verbose', argumentsToString(arguments));
+};
+
+DefaultLogger.silly = function () {
+    DefaultLogger.log('silly', argumentsToString(arguments));
+};
+
+/**
+ * @description Create a new instance of logger
+ * @param {import('winston').LoggerOptions} overWrite
+ * @returns {import('winston').Logger}
+ */
+DefaultLogger.__instance = (overWrite) => {
+    let logger = winston.createLogger({ ...option(overWrite.level), ...overWrite });
+
+    logger.on('close', () => {
+        logger = DefaultLogger;
+    });
+
+    logger.info = function () {
+        logger.log('info', argumentsToString(arguments));
+    };
+
+    logger.error = function () {
+        logger.log('error', argumentsToString(arguments));
+    };
+
+    logger.warn = function () {
+        logger.log('warn', argumentsToString(arguments));
+    };
+
+    logger.debug = function () {
+        logger.log('debug', argumentsToString(arguments));
+    };
+
+    logger.verbose = function () {
+        logger.log('verbose', argumentsToString(arguments));
+    };
+
+    logger.silly = function () {
+        logger.log('silly', argumentsToString(arguments));
+    };
+
+    return logger;
+};
+module.exports = DefaultLogger;

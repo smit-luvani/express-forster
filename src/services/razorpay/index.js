@@ -1,31 +1,52 @@
+const logger = require('../winston'),
+    razorpay = require('razorpay');
+const { paymentGateway } = require('../../common');
+const getENV = require('../../helpers/get-env');
+
 /**
  * @author Smit Luvani
- * @description Export Razorpay API + SDK
- * @module https://www.npmjs.com/package/razorpay
- * @documentation https://docs.razorpay.com/docs/checkout
+ * @description Initializes a Razorpay instance with the given credentials and logs the status.
+ * @param {string} key_id - The key ID for the Razorpay instance.
+ * @param {string} key_secret - The key secret for the Razorpay instance.
+ * @param {string} name - The name identifier for logging purposes.
+ * @returns {import('razorpay') & { key_id: string }} - The initialized Razorpay instance with the key_id property.
  */
+const initializeRazorpay = (key_id, key_secret, name) => {
+    try {
+        const instance = new razorpay({
+            key_id,
+            key_secret,
+        });
+        // Attach key_id as a property for easy access
+        instance.key_id = key_id;
+        logger.info(`Service [Razorpay][${name}]: Successful`);
+        return instance;
+    } catch (error) {
+        logger.error(`Service [Razorpay][${name}]: Failed to Initialize Object.`, error);
+        return null;
+    }
+};
 
-const logger = require('../winston'),
-    razorpay = require('razorpay'),
-    { logging } = require('../../config/default.js');
+let RazorpayDefault = initializeRazorpay(getENV('RAZORPAY_KEY'), getENV('RAZORPAY_SECRET'), paymentGateway.razorpay);
 
-let header = {
-    // Base64 encoded
-    "Authorization": 'Basic ' + Buffer.from(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`).toString('base64')
-}
+/**
+ * @author Smit Luvani
+ * @description Retrieves the appropriate Razorpay instance based on the specified gateway.
+ * @param {('RAZORPAY')} gateway - The gateway identifier.
+ * @returns {import('razorpay') & { key_id: string }} - The corresponding Razorpay instance.
+ * @throws {Error} Throws an error if the gateway is invalid.
+ */
+module.exports = (gateway) => {
+    if (Object.values(paymentGateway).includes(gateway) == false) {
+        logger.error('Service [Razorpay]: Invalid Gateway');
+        throw new Error('Invalid Gateway');
+    }
 
-module.exports.api = {
-    baseURL: 'https://api.razorpay.com/v1',
-    header,
-    key_id: process.env.RAZORPAY_KEY_ID
-}
-
-try {
-    module.exports.sdk = new razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-    logging.razorpay ? logger.info('Service [Razorpay]: Connected') : null;
-} catch (error) {
-    logger.error('Service [Razorpay]: Failed to Initialize Object.\n' + error);
-}
+    switch (gateway) {
+        case paymentGateway.razorpay:
+            return RazorpayDefault;
+        default:
+            logger.error('Service [Razorpay]: Invalid Gateway');
+            throw new Error('Invalid Gateway');
+    }
+};
