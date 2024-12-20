@@ -114,44 +114,51 @@ function argumentsToString(v) {
 }
 
 /**
- * @type {import('winston').Logger & { __instance: (overWrite: import('winston').LoggerOptions) => import('winston').Logger }}
+ * @typedef {{
+*   __instance: (overWrite: import('winston').LoggerOptions) => (import('winston').Logger & {
+*     terminateSession: () => void;
+*   });
+* }} ExtendedLogger
+*/
+
+/**
+ * @type {import('winston').Logger & ExtendedLogger}
  */
 const DefaultLogger = winston.createLogger(option());
 
 DefaultLogger.info = function () {
     DefaultLogger.log('info', argumentsToString(arguments));
 };
-
 DefaultLogger.error = function () {
     DefaultLogger.log('error', argumentsToString(arguments));
 };
-
 DefaultLogger.warn = function () {
     DefaultLogger.log('warn', argumentsToString(arguments));
 };
-
 DefaultLogger.debug = function () {
     DefaultLogger.log('debug', argumentsToString(arguments));
 };
-
 DefaultLogger.verbose = function () {
     DefaultLogger.log('verbose', argumentsToString(arguments));
 };
-
 DefaultLogger.silly = function () {
     DefaultLogger.log('silly', argumentsToString(arguments));
+};
+
+DefaultLogger.terminateSession = function () {
+    let getCallerStack = new Error().stack.split('\n')[2].trim();
+    DefaultLogger.debug('[Service: Winston] terminateSession function is not available for root logger. Please use .close() for manual termination. Callee:', getCallerStack);
 };
 
 /**
  * @description Create a new instance of logger
  * @param {import('winston').LoggerOptions} overWrite
- * @returns {import('winston').Logger}
  */
-DefaultLogger.__instance = (overWrite) => {
+DefaultLogger.__instance = function (overWrite) {
     let logger = winston.createLogger({ ...option(overWrite.level), ...overWrite });
 
     logger.on('close', () => {
-        logger = DefaultLogger;
+        logger = DefaultLogger.__instance({ ...option(overWrite.level), ...overWrite, defaultMeta: { requestId: `Terminated Session ${overWrite.defaultMeta?.requestId}` } });
     });
 
     logger.info = function () {
@@ -178,6 +185,12 @@ DefaultLogger.__instance = (overWrite) => {
         logger.log('silly', argumentsToString(arguments));
     };
 
+    logger.terminateSession = function () {
+        logger.debug(`[Service: Winston] Terminating Session`);
+        logger.close();
+    }
+
     return logger;
 };
+
 module.exports = DefaultLogger;

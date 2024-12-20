@@ -4,7 +4,7 @@ const WinstonLogger = require('winston').Logger;
 /**
  * @author Smit Luvani
  * @description It will find the logger instance from the all parent function until it finds the first logger instance
- * @returns {import('winston').Logger}
+ * @returns {import('winston').Logger | (import('winston').Logger & {terminateSession:function})}
  *
  * This function has snippet with deprecated `arguments.callee` which is not recommended to use.
  * - If you're using this in strict mode, it will not work as expected. In such case, it is recommended to use with logger argument as below:

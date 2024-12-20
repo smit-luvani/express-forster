@@ -106,6 +106,7 @@ module.exports = function (
         }
     } catch (error) {
         childLogger.error(error);
+        childLogger.terminateSession();
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ status: httpStatus.INTERNAL_SERVER_ERROR, error: error.stack });
     }
 
@@ -149,6 +150,7 @@ module.exports = function (
         if (CURRENT_ENVIRONMENT !== environments.production) jsonResponse.error = data instanceof Error == true ? data?.stack : undefined;
     } catch (error) {
         childLogger.error(error);
+        childLogger.terminateSession();
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ error: error.stack });
     }
 
@@ -180,9 +182,7 @@ Process Time: ${responseTime}ms | Status: ${jsonResponse.status} | Response: ${j
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message || 'Something went wrong', error: error.stack });
     } finally {
         if (res.logger && options.terminateAttachedLogger === true) {
-            childLogger.close();
-            childLogger.destroy();
-            childLogger = null;
+            childLogger.terminateSession();
         }
     }
 };
